@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌿 BioThermo Lab · Para Arantza</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f0a;
+    --bg2: #111811;
+    --bg3: #182018;
+    --card: #1a231a;
+    --card2: #1f2b1f;
+    --border: #2d3d2d;
+    --green: #4ade80;
+    --green2: #22c55e;
+    --green3: #16a34a;
+    --mint: #6ee7b7;
+    --teal: #2dd4bf;
+    --pink: #f9a8d4;
+    --rose: #fb7185;
+    --amber: #fbbf24;
+    --text: #e8f5e8;
+    --text2: #a3c5a3;
+    --text3: #6b8c6b;
+    --result: #bbf7d0;
+    --input-bg: #0f1a0f;
+    --shadow: 0 4px 20px rgba(0,0,0,0.5);
+    --r: 12px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0a1a0a 0%, #0d2a0d 40%, #0a1f18 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .logo-icon { font-size: 2rem; line-height: 1; filter: drop-shadow(0 0 10px #4ade8088); }
+  .header-text h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    background: linear-gradient(120deg, var(--green), var(--mint), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+  }
+  .header-text p {
+    font-size: 0.75rem;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+    margin-top: 2px;
+  }
+  .love-badge {
+    margin-left: auto;
+    background: linear-gradient(135deg, #831843, #be185d);
+    color: #fce7f3;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    box-shadow: 0 0 15px rgba(190,24,93,0.4);
+  }
+
+  /* TABS */
+  .tabs-wrap {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs-wrap::-webkit-scrollbar { display: none; }
+  .tabs { display: flex; max-width: 1200px; margin: 0 auto; min-width: max-content; }
+  .tab {
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text3);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .tab:hover { color: var(--text2); }
+  .tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+  /* MAIN */
+  .main { max-width: 1200px; margin: 0 auto; padding: 24px 16px 60px; }
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* SECTION HEADER */
+  .sec-header { margin-bottom: 24px; }
+  .sec-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sec-header p { font-size: 0.82rem; color: var(--text3); margin-top: 4px; }
+
+  /* GRID LAYOUTS */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card.results { background: var(--card2); border-color: #2a3d2a; }
+  .card h3 {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--green);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card h3 .dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--green);
+  }
+
+  /* INPUTS */
+  .field { margin-bottom: 12px; }
+  .field label {
+    display: block;
+    font-size: 0.73rem;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 4px;
+  }
+  .field input, .field select {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 9px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .field input:focus, .field select:focus { border-color: var(--green3); }
+  .field input[readonly] {
+    background: #0c160c;
+    color: var(--result);
+    border-color: #2a4a2a;
+    cursor: default;
+  }
+
+  /* RESULT ITEMS */
+  .result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 8px;
+  }
+  .result-item:last-child { border-bottom: none; }
+  .result-label { font-size: 0.76rem; color: var(--text2); }
+  .result-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--result);
+    font-weight: 500;
+    text-align: right;
+  }
+  .result-value.highlight {
+    color: var(--green);
+    font-size: 1rem;
+    font-weight: 700;
+    text-shadow: 0 0 10px #4ade8055;
+  }
+  .result-value.warn { color: var(--amber); }
+  .result-value.danger { color: var(--rose); }
+
+  /* STATUS BADGE */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+  .badge.liquid { background: #1e3a5f; color: #93c5fd; }
+  .badge.vapor { background: #1a3a1a; color: #86efac; }
+
+  /* CHART CONTAINER */
+  .chart-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 20px;
+    margin-top: 16px;
+  }
+  .chart-wrap canvas { max-height: 400px; }
+
+  /* TABLE */
+  .tbl-wrap { overflow-x: auto; margin-top: 12px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    font-family: 'DM Mono', monospace;
+  }
+  th {
+    background: #0d1f0d;
+    color: var(--green);
+    padding: 8px 10px;
+    text-align: left;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #1a271a;
+    color: var(--text2);
+  }
+  td.val { color: var(--result); }
+  tr:hover td { background: #1a271a55; }
+
+  /* NOTE BOX */
+  .note {
+    background: #1a2a1a;
+    border-left: 3px solid var(--amber);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.77rem;
+    color: #d4b87a;
+    margin-bottom: 16px;
+  }
+
+  /* SEPARATOR */
+  .sep { height: 1px; background: var(--border); margin: 20px 0; }
+  .sec-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text3);
+    margin: 16px 0 10px;
+    font-weight: 700;
+  }
+
+  /* COMPONENT BLOCK */
+  .comp-block {
+    background: #111d11;
+    border: 1px solid #243024;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .comp-block h4 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--mint);
+    margin-bottom: 10px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--text3);
+    font-size: 0.72rem;
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  footer span { color: var(--pink); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 600px) {
+    .main { padding: 16px 12px 50px; }
+    .card { padding: 14px; }
+    .love-badge { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo-icon">🌿</div>
+    <div class="header-text">
+      <h1>BioThermo Lab · Para Arantza</h1>
+      <p>Termodinámica II · Calculadora Interactiva Completa</p>
+    </div>
+    <div class="love-badge">💚 Hecho con amor</div>
+  </div>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <div class="tab active" onclick="showTab(-1)">🔍 Datos Especie</div>
+    <div class="tab" onclick="showTab(0)">📈 Entalpías (ig)</div>
+    <div class="tab" onclick="showTab(1)">⚗️ Gas Lee-Kesler</div>
+    <div class="tab" onclick="showTab(2)">💧 Líq. Lee-Kesler</div>
+    <div class="tab" onclick="showTab(3)">🌫️ Vapor Pitzer</div>
+    <div class="tab" onclick="showTab(4)">🔵 Líq. Pitzer</div>
+    <div class="tab" onclick="showTab(5)">💦 HS (H₂O)</div>
+    <div class="tab" onclick="showTab(6)">⚖️ Mezcla 2</div>
+    <div class="tab" onclick="showTab(7)">🧪 Mezcla 3</div>
+    <div class="tab" onclick="showTab(8)">🔬 Mezcla 4</div>
+    <div class="tab" onclick="showTab(9)">📊 f / fsat</div>
+  </div>
+</div>
+
+<main class="main">
+
+<!-- ============================================================ SECTION -1: DATOS DE ESPECIE -->
+<div class="section active" id="s-1">
+  <div class="sec-header">
+    <h2>🔍 Datos del Componente · Referencia Termodinámica</h2>
+    <p>Busca cualquier especie para ver sus propiedades críticas, entalpía/Gibbs de formación, Cp y Antoine</p>
+  </div>
+  <div class="card" style="margin-bottom:1.5rem;">
+    <h3><span class="dot"></span>Buscar compuesto</h3>
+    <div style="position:relative;">
+      <input type="text" id="es_search"
+        placeholder="Escribe el nombre... ej: agua, benceno, metano, etanol..."
+        style="width:100%;box-sizing:border-box;background:var(--input-bg);border:2px solid var(--mint);border-radius:var(--r);color:var(--text);padding:0.75rem 1rem;font-size:1rem;font-family:'Nunito',sans-serif;outline:none;"
+        oninput="esSearch(this.value)"
+        autocomplete="off"
+      >
+      <div id="es_dropdown" style="position:absolute;top:100%;left:0;right:0;background:#1a2a1a;border:1px solid var(--mint);border-top:none;border-radius:0 0 8px 8px;max-height:260px;overflow-y:auto;z-index:99;display:none;"></div>
+    </div>
+    <p id="es_hint" style="font-size:0.8rem;color:#8aab8a;margin-top:0.5rem;">Escribe al menos 2 caracteres para buscar entre los compuestos disponibles.</p>
+  </div>
+
+  <div id="es_result" style="display:none;">
+    <!-- NOMBRE + FÓRMULA -->
+    <div style="text-align:center;margin-bottom:1.5rem;">
+      <h2 id="es_name" style="color:var(--mint);font-family:'DM Serif Display',serif;font-size:2rem;margin:0;"></h2>
+      <p id="es_formula" style="color:#aaa;font-size:1.1rem;margin-top:0.3rem;"></p>
+      <p id="es_estado" style="color:#7aaa7a;font-size:0.85rem;font-style:italic;margin-top:0.2rem;"></p>
+    </div>
+
+    <div class="grid-2">
+      <!-- PROPIEDADES CRÍTICAS -->
+      <div class="card">
+        <h3><span class="dot"></span>Propiedades Críticas &amp; Físicas</h3>
+        <div id="es_criticas"></div>
+      </div>
+      <!-- FORMACION -->
+      <div class="card">
+        <h3><span class="dot"></span>Entalpía y Energía de Gibbs de Formación</h3>
+        <div id="es_formacion"></div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:1rem;">
+      <!-- Cp -->
+      <div class="card">
+        <h3><span class="dot"></span>Capacidad Calorífica Cp (gas ideal)</h3>
+        <p style="font-size:0.78rem;color:#8aab8a;margin-bottom:0.8rem;">C<sup>ig</sup><sub>p</sub>/R = A + BT + CT² + DT⁻²  &nbsp;·&nbsp; T en Kelvin</p>
+        <div id="es_cp"></div>
+        <div id="es_cp_nota" style="font-size:0.75rem;color:#8aab8a;margin-top:0.6rem;"></div>
+      </div>
+      <!-- ANTOINE -->
+      <div class="card">
+        <h3><span class="dot"></span>Antoine (Presión de vapor)</h3>
+        <p style="font-size:0.78rem;color:#8aab8a;margin-bottom:0.8rem;">ln P<sup>sat</sup>/kPa = A − B / (t/°C + C)</p>
+        <div id="es_antoine"></div>
+        <div id="es_psat_calc" style="margin-top:0.8rem;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 0: ENTALPÍAS IG -->
+<div class="section active" id="s0">
+  <div class="sec-header">
+    <h2>📈 Propiedades parciales · Gases ideales</h2>
+    <p>Calcula entalpías H₁ y H₂ en función de la fracción molar X</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="dot"></span>Parámetros</h3>
+      <p class="sec-title">H₁(X) = 40X³ − 60X² + a₁</p>
+      <div class="field"><label>Coeficiente a₁ (H₁, término constante)</label><input type="number" id="ig_a1" value="420" oninput="calcIG()"></div>
+      <div class="field"><label>Coeficiente cúbico H₁</label><input type="number" id="ig_c1" value="40" oninput="calcIG()"></div>
+      <div class="field"><label>Coeficiente cuadrático H₁</label><input type="number" id="ig_c2" value="-60" oninput="calcIG()"></div>
+      <div class="sep"></div>
+      <p class="sec-title">H₂(X) = 40X³ + a₂</p>
+      <div class="field"><label>Coeficiente a₂ (H₂, término constante)</label><input type="number" id="ig_a2" value="600" oninput="calcIG()"></div>
+      <div class="field"><label>Coeficiente cúbico H₂</label><input type="number" id="ig_c3" value="40" oninput="calcIG()"></div>
+      <div class="field"><label>X evaluación puntual</label><input type="number" id="ig_x" value="0.5" step="0.01" min="0" max="1" oninput="calcIG()"></div>
+    </div>
+    <div class="card results">
+      <h3><span class="dot"></span>Resultado puntual</h3>
+      <div id="ig_results"></div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>Tabla X de 0.1 a 1.0</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>X</th><th>H₁ (kJ/mol)</th><th>H₂ (kJ/mol)</th></tr></thead>
+          <tbody id="ig_table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="chart-wrap">
+    <canvas id="ig_chart"></canvas>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 1: FUGACIDAD GAS LEE KESLER -->
+<div class="section" id="s1">
+  <div class="sec-header">
+    <h2>⚗️ Fugacidad de gases · Lee Kesler</h2>
+    <p>Correlaciones generalizadas Pitzer-Curl y método Lee-Kesler</p>
+  </div>
+  <div class="note">⚠️ Para la interpolación de φ⁰ y φ¹, ingresa los valores de frontera de la Tabla E.15 (Smith). El resultado final usa ω de tabla.</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="dot"></span>Datos del componente</h3>
+      <div class="field"><label>Especie</label><input type="text" id="lkg_especie" value="1-Buteno" oninput="calcLKG()"></div>
+      <div class="field"><label>Temperatura T (K)</label><input type="number" id="lkg_T" value="473.15" oninput="calcLKG()"></div>
+      <div class="field"><label>Presión P (bar)</label><input type="number" id="lkg_P" value="70" oninput="calcLKG()"></div>
+      <div class="field"><label>ω (tabla)</label><input type="number" id="lkg_w" value="0.191" step="0.001" oninput="calcLKG()"></div>
+      <div class="field"><label>Pc (bar)</label><input type="number" id="lkg_Pc" value="40.43" oninput="calcLKG()"></div>
+      <div class="field"><label>Tc (K)</label><input type="number" id="lkg_Tc" value="420" oninput="calcLKG()"></div>
+      <div class="field"><label>Tn (K) – Temperatura normal de ebullición</label><input type="number" id="lkg_Tn" value="266.9" oninput="calcLKG()"></div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>Antoine (Psat)</h3>
+      <div class="field"><label>A</label><input type="number" id="lkg_A" value="0" oninput="calcLKG()"></div>
+      <div class="field"><label>B</label><input type="number" id="lkg_B" value="0" oninput="calcLKG()"></div>
+      <div class="field"><label>C</label><input type="number" id="lkg_C" value="0" oninput="calcLKG()"></div>
+    </div>
+    <div class="card results">
+      <h3><span class="dot"></span>Cálculos Pitzer-Curl (Psat)</h3>
+      <div id="lkg_results_psat"></div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>Interpolación Lee-Kesler φ⁰</h3>
+      <div class="grid-3">
+        <div class="field"><label>Tr₁ (φ⁰)</label><input type="number" id="lkg_tr1_0" value="1.5" step="0.05" oninput="calcLKG()"></div>
+        <div class="field"><label>Tr (calc)</label><input type="number" id="lkg_tr_0" value="" readonly></div>
+        <div class="field"><label>Tr₂ (φ⁰)</label><input type="number" id="lkg_tr2_0" value="2" step="0.05" oninput="calcLKG()"></div>
+        <div class="field"><label>Y1 (Tr₁)</label><input type="number" id="lkg_y1_0" value="0.6412" step="0.0001" oninput="calcLKG()"></div>
+        <div class="field"><label>Y (interp)</label><input type="number" id="lkg_y_0" value="" readonly></div>
+        <div class="field"><label>Y2 (Tr₂)</label><input type="number" id="lkg_y2_0" value="0.5408" step="0.0001" oninput="calcLKG()"></div>
+      </div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>Interpolación Lee-Kesler φ¹</h3>
+      <div class="grid-3">
+        <div class="field"><label>Tr₁ (φ¹)</label><input type="number" id="lkg_tr1_1" value="1.5" step="0.05" oninput="calcLKG()"></div>
+        <div class="field"><label>Tr (calc)</label><input type="number" id="lkg_tr_1" value="" readonly></div>
+        <div class="field"><label>Tr₂ (φ¹)</label><input type="number" id="lkg_tr2_1" value="2" step="0.05" oninput="calcLKG()"></div>
+        <div class="field"><label>Y1 (Tr₁)</label><input type="number" id="lkg_y1_1" value="1.0593" step="0.0001" oninput="calcLKG()"></div>
+        <div class="field"><label>Y (interp)</label><input type="number" id="lkg_y_1" value="" readonly></div>
+        <div class="field"><label>Y2 (Tr₂)</label><input type="number" id="lkg_y2_1" value="1.099" step="0.0001" oninput="calcLKG()"></div>
+      </div>
+      <div class="sep"></div>
+      <div id="lkg_results_final"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 2: FUGACIDAD LÍQUIDOS PUROS LEE KESLER -->
+<div class="section" id="s2">
+  <div class="sec-header">
+    <h2>💧 Fugacidad Líquidos Puros · Lee Kesler</h2>
+    <p>Componente en estado líquido con corrección de Poynting</p>
+  </div>
+  <div class="note">⚠️ Ingresa los valores de frontera de la Tabla E.15 para φ⁰ y φ¹. La Psat usada corresponde a la del promedio de correlaciones.</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="dot"></span>Datos del componente</h3>
+      <div class="field"><label>Especie</label><input type="text" id="lkl_especie" value="Ciclopentano" oninput="calcLKL()"></div>
+      <div class="field"><label>Temperatura T (K)</label><input type="number" id="lkl_T" value="383.15" oninput="calcLKL()"></div>
+      <div class="field"><label>Presión P (bar)</label><input type="number" id="lkl_P" value="275" oninput="calcLKL()"></div>
+      <div class="field"><label>ω (tabla)</label><input type="number" id="lkl_w" value="0.196" step="0.001" oninput="calcLKL()"></div>
+      <div class="field"><label>Pc (bar)</label><input type="number" id="lkl_Pc" value="45.02" oninput="calcLKL()"></div>
+      <div class="field"><label>Tc (K)</label><input type="number" id="lkl_Tc" value="511.8" oninput="calcLKL()"></div>
+      <div class="field"><label>Tn (K)</label><input type="number" id="lkl_Tn" value="322.4" oninput="calcLKL()"></div>
+      <div class="field"><label>Zc</label><input type="number" id="lkl_Zc" value="0.273" step="0.001" oninput="calcLKL()"></div>
+      <div class="field"><label>Vc (cm³/mol)</label><input type="number" id="lkl_Vc" value="258" oninput="calcLKL()"></div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>Antoine</h3>
+      <div class="field"><label>A</label><input type="number" id="lkl_A" value="0" oninput="calcLKL()"></div>
+      <div class="field"><label>B</label><input type="number" id="lkl_B" value="0" oninput="calcLKL()"></div>
+      <div class="field"><label>C</label><input type="number" id="lkl_C" value="0" oninput="calcLKL()"></div>
+    </div>
+    <div class="card results">
+      <h3><span class="dot"></span>Resultados Psat y estado</h3>
+      <div id="lkl_results_psat"></div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>Interpolación φ⁰</h3>
+      <div class="grid-3">
+        <div class="field"><label>Tr₁</label><input type="number" id="lkl_tr1_0" value="0.1" step="0.05" oninput="calcLKL()"></div>
+        <div class="field"><label>Tr (calc)</label><input type="number" id="lkl_tr_0" value="" readonly></div>
+        <div class="field"><label>Tr₂</label><input type="number" id="lkl_tr2_0" value="0.2" step="0.05" oninput="calcLKL()"></div>
+        <div class="field"><label>Y1</label><input type="number" id="lkl_y1_0" value="0.9057" step="0.0001" oninput="calcLKL()"></div>
+        <div class="field"><label>Y (interp)</label><input type="number" id="lkl_y_0" value="" readonly></div>
+        <div class="field"><label>Y2</label><input type="number" id="lkl_y2_0" value="0.456" step="0.0001" oninput="calcLKL()"></div>
+      </div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>Interpolación φ¹</h3>
+      <div class="grid-3">
+        <div class="field"><label>Tr₁</label><input type="number" id="lkl_tr1_1" value="0.75" step="0.05" oninput="calcLKL()"></div>
+        <div class="field"><label>Tr (calc)</label><input type="number" id="lkl_tr_1" value="" readonly></div>
+        <div class="field"><label>Tr₂</label><input type="number" id="lkl_tr2_1" value="0.2" step="0.05" oninput="calcLKL()"></div>
+        <div class="field"><label>Y1</label><input type="number" id="lkl_y1_1" value="0.9036" step="0.0001" oninput="calcLKL()"></div>
+        <div class="field"><label>Y (interp)</label><input type="number" id="lkl_y_1" value="" readonly></div>
+        <div class="field"><label>Y2</label><input type="number" id="lkl_y2_1" value="0.1182" step="0.0001" oninput="calcLKL()"></div>
+      </div>
+      <div class="sep"></div>
+      <div id="lkl_results_final"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 3: FUGACIDAD VAPOR PITZER -->
+<div class="section" id="s3">
+  <div class="sec-header">
+    <h2>🌫️ Fugacidad de Vapor · Correlación Pitzer</h2>
+    <p>Coeficiente de fugacidad usando B⁰ y B¹ de la correlación de Pitzer-Curl</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="dot"></span>Datos del componente</h3>
+      <div class="field"><label>Especie</label><input type="text" id="pv_especie" value="Dióxido de azufre" oninput="calcPV()"></div>
+      <div class="field"><label>Temperatura T (K)</label><input type="number" id="pv_T" value="600" oninput="calcPV()"></div>
+      <div class="field"><label>Presión P (bar)</label><input type="number" id="pv_P" value="300" oninput="calcPV()"></div>
+      <div class="field"><label>ω (tabla)</label><input type="number" id="pv_w" value="0.245" step="0.001" oninput="calcPV()"></div>
+      <div class="field"><label>Pc (bar)</label><input type="number" id="pv_Pc" value="78.84" oninput="calcPV()"></div>
+      <div class="field"><label>Tc (K)</label><input type="number" id="pv_Tc" value="430.8" oninput="calcPV()"></div>
+      <div class="field"><label>Tn (K)</label><input type="number" id="pv_Tn" value="263.1" oninput="calcPV()"></div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>Antoine</h3>
+      <div class="field"><label>A</label><input type="number" id="pv_A" value="0" oninput="calcPV()"></div>
+      <div class="field"><label>B</label><input type="number" id="pv_B" value="0" oninput="calcPV()"></div>
+      <div class="field"><label>C</label><input type="number" id="pv_C" value="0" oninput="calcPV()"></div>
+    </div>
+    <div class="card results">
+      <h3><span class="dot"></span>Resultados</h3>
+      <div id="pv_results"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 4: FUGACIDAD LÍQUIDOS PUROS PITZER -->
+<div class="section" id="s4">
+  <div class="sec-header">
+    <h2>🔵 Fugacidad Líquidos Puros · Pitzer</h2>
+    <p>Fugacidad de líquido saturado con corrección de Poynting usando Pitzer</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="dot"></span>Datos del componente</h3>
+      <div class="field"><label>Especie</label><input type="text" id="pl_especie" value="Ciclopentano" oninput="calcPL()"></div>
+      <div class="field"><label>Temperatura T (K)</label><input type="number" id="pl_T" value="383.15" oninput="calcPL()"></div>
+      <div class="field"><label>Presión P (bar)</label><input type="number" id="pl_P" value="275" oninput="calcPL()"></div>
+      <div class="field"><label>ω (tabla)</label><input type="number" id="pl_w" value="0.196" step="0.001" oninput="calcPL()"></div>
+      <div class="field"><label>Pc (bar)</label><input type="number" id="pl_Pc" value="45.02" oninput="calcPL()"></div>
+      <div class="field"><label>Tc (K)</label><input type="number" id="pl_Tc" value="511.8" oninput="calcPL()"></div>
+      <div class="field"><label>Tn (K)</label><input type="number" id="pl_Tn" value="322.4" oninput="calcPL()"></div>
+      <div class="field"><label>Zc</label><input type="number" id="pl_Zc" value="0.273" step="0.001" oninput="calcPL()"></div>
+      <div class="field"><label>Vc (cm³/mol)</label><input type="number" id="pl_Vc" value="258" oninput="calcPL()"></div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>Antoine</h3>
+      <div class="field"><label>A</label><input type="number" id="pl_A" value="0" oninput="calcPL()"></div>
+      <div class="field"><label>B</label><input type="number" id="pl_B" value="0" oninput="calcPL()"></div>
+      <div class="field"><label>C</label><input type="number" id="pl_C" value="0" oninput="calcPL()"></div>
+    </div>
+    <div class="card results">
+      <h3><span class="dot"></span>Resultados</h3>
+      <div id="pl_results"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 5: HS (H2O) -->
+<div class="section" id="s5">
+  <div class="sec-header">
+    <h2>💦 Fugacidad HS · H₂O (Vapor de Agua)</h2>
+    <p>Cálculo de fugacidad usando tablas de vapor y entropía/entalpía</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="dot"></span>Datos base</h3>
+      <div class="field"><label>Temperatura T (K)</label><input type="number" id="hs_T" value="562.25" oninput="calcHS()"></div>
+      <div class="field"><label>PM (g/mol)</label><input type="number" id="hs_PM" value="18" oninput="calcHS()"></div>
+      <div class="field"><label>R (J/mol K)</label><input type="number" id="hs_R" value="8.314" readonly></div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>P sat (referencia)</h3>
+      <div class="field"><label>Psat (kPa)</label><input type="number" id="hs_Psat" value="8592.7" oninput="calcHS()"></div>
+      <div class="field"><label>φsat (coef. fugacidad sat.)</label><input type="number" id="hs_phisat" value="0.9" step="0.001" oninput="calcHS()"></div>
+      <div class="field"><label>Vl (cm³/mol) = 1.404 × PM × Vc_coef</label><input type="number" id="hs_Vl_input" value="25.272" step="0.001" oninput="calcHS()"></div>
+      <div class="field"><label>R (kPa·cm³/mol·K)</label><input type="number" id="hs_Rval" value="8314" readonly></div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>Tabla vapor (Gas ideal ref.) P = 1 kPa</h3>
+      <div class="field"><label>H ref (kJ/g)</label><input type="number" id="hs_H_ref" value="3076.8" step="0.01" oninput="calcHS()"></div>
+      <div class="field"><label>S ref (kJ/g·K)</label><input type="number" id="hs_S_ref" value="10.345" step="0.0001" oninput="calcHS()"></div>
+    </div>
+    <div class="card results">
+      <h3><span class="dot"></span>Fugacidad de vapor a diferentes presiones</h3>
+      <p class="sec-title">Ingresar H y S para cada presión</p>
+      <div id="hs_vapor_inputs"></div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>Resultados vapor</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>P (kPa)</th><th>ln(fi/P)</th><th>fi (kPa)</th><th>φ</th></tr></thead>
+          <tbody id="hs_vapor_table"></tbody>
+        </table>
+      </div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>Fugacidad de líquido</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>P (kPa)</th><th>fi (kPa)</th><th>φ</th></tr></thead>
+          <tbody id="hs_liquid_table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 6: MEZCLA DE DOS -->
+<div class="section" id="s6">
+  <div class="sec-header">
+    <h2>⚖️ Mezcla de dos componentes · Pitzer</h2>
+    <p>Coeficientes y fugacidades parciales de una mezcla binaria</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="dot"></span>Condiciones de operación</h3>
+      <div class="field"><label>Temperatura T (K)</label><input type="number" id="m2_T" value="323.15" oninput="calcM2()"></div>
+      <div class="field"><label>Presión P (bar)</label><input type="number" id="m2_P" value="0.25" step="0.01" oninput="calcM2()"></div>
+      <div class="field"><label>y₁ (fracción molar 1)</label><input type="number" id="m2_y1" value="0.5" step="0.01" min="0" max="1" oninput="calcM2()"></div>
+      <div class="field"><label>y₂ (fracción molar 2)</label><input type="number" id="m2_y2" value="0.5" step="0.01" min="0" max="1" oninput="calcM2()"></div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>Componente 1</h3>
+      <div class="field"><label>Especie 1</label><input type="text" id="m2_n1" value="Metil Etíl Cetona"></div>
+      <div class="field"><label>ω₁</label><input type="number" id="m2_w1" value="0.323" step="0.001" oninput="calcM2()"></div>
+      <div class="field"><label>Pc₁ (bar)</label><input type="number" id="m2_Pc1" value="41.5" oninput="calcM2()"></div>
+      <div class="field"><label>Tc₁ (K)</label><input type="number" id="m2_Tc1" value="535.5" oninput="calcM2()"></div>
+      <div class="field"><label>Zc₁</label><input type="number" id="m2_Zc1" value="0.249" step="0.001" oninput="calcM2()"></div>
+      <div class="field"><label>Vc₁ (cm³/mol)</label><input type="number" id="m2_Vc1" value="267" oninput="calcM2()"></div>
+      <div class="sep"></div>
+      <h3><span class="dot"></span>Componente 2</h3>
+      <div class="field"><label>Especie 2</label><input type="text" id="m2_n2" value="Tolueno"></div>
+      <div class="field"><label>ω₂</label><input type="number" id="m2_w2" value="0.262" step="0.001" oninput="calcM2()"></div>
+      <div class="field"><label>Pc₂ (bar)</label><input type="number" id="m2_Pc2" value="41.06" oninput="calcM2()"></div>
+      <div class="field"><label>Tc₂ (K)</label><input type="number" id="m2_Tc2" value="591.8" oninput="calcM2()"></div>
+      <div class="field"><label>Zc₂</label><input type="number" id="m2_Zc2" value="0.264" step="0.001" oninput="calcM2()"></div>
+      <div class="field"><label>Vc₂ (cm³/mol)</label><input type="number" id="m2_Vc2" value="316" oninput="calcM2()"></div>
+    </div>
+    <div class="card results">
+      <h3><span class="dot"></span>Resultados</h3>
+      <div id="m2_results"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 7: MEZCLA DE TRES -->
+<div class="section" id="s7">
+  <div class="sec-header">
+    <h2>🧪 Mezcla de tres componentes · Pitzer</h2>
+    <p>Fugacidades en mezcla ternaria de gases</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="dot"></span>Condiciones</h3>
+      <div class="field"><label>T (K)</label><input type="number" id="m3_T" value="375.15" oninput="calcM3()"></div>
+      <div class="field"><label>P (bar)</label><input type="number" id="m3_P" value="35" oninput="calcM3()"></div>
+      <div class="field"><label>y₁</label><input type="number" id="m3_y1" value="0.21" step="0.01" oninput="calcM3()"></div>
+      <div class="field"><label>y₂</label><input type="number" id="m3_y2" value="0.43" step="0.01" oninput="calcM3()"></div>
+      <div class="field"><label>y₃ = 1 − y₁ − y₂</label><input type="number" id="m3_y3" value="" readonly></div>
+      <div class="sep"></div>
+      <div class="comp-block">
+        <h4>COMP 1</h4>
+        <div class="field"><label>Especie</label><input type="text" id="m3_n1" value="Metano"></div>
+        <div class="field"><label>ω₁</label><input type="number" id="m3_w1" value="0.012" step="0.001" oninput="calcM3()"></div>
+        <div class="field"><label>Pc₁ (bar)</label><input type="number" id="m3_Pc1" value="45.99" oninput="calcM3()"></div>
+        <div class="field"><label>Tc₁ (K)</label><input type="number" id="m3_Tc1" value="190.6" oninput="calcM3()"></div>
+        <div class="field"><label>Zc₁</label><input type="number" id="m3_Zc1" value="0.286" step="0.001" oninput="calcM3()"></div>
+        <div class="field"><label>Vc₁ (cm³/mol)</label><input type="number" id="m3_Vc1" value="98.6" oninput="calcM3()"></div>
+      </div>
+      <div class="comp-block">
+        <h4>COMP 2</h4>
+        <div class="field"><label>Especie</label><input type="text" id="m3_n2" value="Etano"></div>
+        <div class="field"><label>ω₂</label><input type="number" id="m3_w2" value="0.1" step="0.001" oninput="calcM3()"></div>
+        <div class="field"><label>Pc₂ (bar)</label><input type="number" id="m3_Pc2" value="48.72" oninput="calcM3()"></div>
+        <div class="field"><label>Tc₂ (K)</label><input type="number" id="m3_Tc2" value="305.3" oninput="calcM3()"></div>
+        <div class="field"><label>Zc₂</label><input type="number" id="m3_Zc2" value="0.279" step="0.001" oninput="calcM3()"></div>
+        <div class="field"><label>Vc₂ (cm³/mol)</label><input type="number" id="m3_Vc2" value="145.5" oninput="calcM3()"></div>
+      </div>
+      <div class="comp-block">
+        <h4>COMP 3</h4>
+        <div class="field"><label>Especie</label><input type="text" id="m3_n3" value="Propano"></div>
+        <div class="field"><label>ω₃</label><input type="number" id="m3_w3" value="0.152" step="0.001" oninput="calcM3()"></div>
+        <div class="field"><label>Pc₃ (bar)</label><input type="number" id="m3_Pc3" value="42.48" oninput="calcM3()"></div>
+        <div class="field"><label>Tc₃ (K)</label><input type="number" id="m3_Tc3" value="369.8" oninput="calcM3()"></div>
+        <div class="field"><label>Zc₃</label><input type="number" id="m3_Zc3" value="0.276" step="0.001" oninput="calcM3()"></div>
+        <div class="field"><label>Vc₃ (cm³/mol)</label><input type="number" id="m3_Vc3" value="200" oninput="calcM3()"></div>
+      </div>
+    </div>
+    <div class="card results">
+      <h3><span class="dot"></span>Resultados mezcla ternaria</h3>
+      <div id="m3_results"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 8: MEZCLA DE CUATRO -->
+<div class="section" id="s8">
+  <div class="sec-header">
+    <h2>🔬 Mezcla de cuatro componentes · Pitzer</h2>
+    <p>H₂, CO, CH₄, H₂O – cálculo de fugacidades en mezcla cuaternaria</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="dot"></span>Condiciones</h3>
+      <div class="field"><label>T (K)</label><input type="number" id="m4_T" value="493.15" oninput="calcM4()"></div>
+      <div class="field"><label>P (bar)</label><input type="number" id="m4_P" value="55.7287" oninput="calcM4()"></div>
+      <div class="field"><label>y₁</label><input type="number" id="m4_y1" value="0.373333" step="0.000001" oninput="calcM4()"></div>
+      <div class="field"><label>y₂</label><input type="number" id="m4_y2" value="0.28" step="0.001" oninput="calcM4()"></div>
+      <div class="field"><label>y₃</label><input type="number" id="m4_y3" value="0.2" step="0.001" oninput="calcM4()"></div>
+      <div class="field"><label>y₄ = 1 − y₁ − y₂ − y₃</label><input type="number" id="m4_y4" value="" readonly></div>
+      <div class="sep"></div>
+      <div class="comp-block"><h4>COMP 1 · Hidrógeno</h4>
+        <div class="field"><label>ω₁</label><input type="number" id="m4_w1" value="-0.216" step="0.001" oninput="calcM4()"></div>
+        <div class="field"><label>Tc₁ (K)</label><input type="number" id="m4_Tc1" value="33.19" oninput="calcM4()"></div>
+        <div class="field"><label>Pc₁ (bar)</label><input type="number" id="m4_Pc1" value="13.13" oninput="calcM4()"></div>
+        <div class="field"><label>Zc₁</label><input type="number" id="m4_Zc1" value="0.305" step="0.001" oninput="calcM4()"></div>
+        <div class="field"><label>Vc₁ (cm³/mol)</label><input type="number" id="m4_Vc1" value="64.1" oninput="calcM4()"></div>
+      </div>
+      <div class="comp-block"><h4>COMP 2 · Monóxido de carbono</h4>
+        <div class="field"><label>ω₂</label><input type="number" id="m4_w2" value="0.048" step="0.001" oninput="calcM4()"></div>
+        <div class="field"><label>Tc₂ (K)</label><input type="number" id="m4_Tc2" value="132.9" oninput="calcM4()"></div>
+        <div class="field"><label>Pc₂ (bar)</label><input type="number" id="m4_Pc2" value="34.99" oninput="calcM4()"></div>
+        <div class="field"><label>Zc₂</label><input type="number" id="m4_Zc2" value="0.299" step="0.001" oninput="calcM4()"></div>
+        <div class="field"><label>Vc₂ (cm³/mol)</label><input type="number" id="m4_Vc2" value="93.4" oninput="calcM4()"></div>
+      </div>
+      <div class="comp-block"><h4>COMP 3 · Metano</h4>
+        <div class="field"><label>ω₃</label><input type="number" id="m4_w3" value="0.012" step="0.001" oninput="calcM4()"></div>
+        <div class="field"><label>Tc₃ (K)</label><input type="number" id="m4_Tc3" value="190.6" oninput="calcM4()"></div>
+        <div class="field"><label>Pc₃ (bar)</label><input type="number" id="m4_Pc3" value="45.99" oninput="calcM4()"></div>
+        <div class="field"><label>Zc₃</label><input type="number" id="m4_Zc3" value="0.286" step="0.001" oninput="calcM4()"></div>
+        <div class="field"><label>Vc₃ (cm³/mol)</label><input type="number" id="m4_Vc3" value="98.6" oninput="calcM4()"></div>
+      </div>
+      <div class="comp-block"><h4>COMP 4 · Agua</h4>
+        <div class="field"><label>ω₄</label><input type="number" id="m4_w4" value="0.345" step="0.001" oninput="calcM4()"></div>
+        <div class="field"><label>Tc₄ (K)</label><input type="number" id="m4_Tc4" value="647.1" oninput="calcM4()"></div>
+        <div class="field"><label>Pc₄ (bar)</label><input type="number" id="m4_Pc4" value="220.55" oninput="calcM4()"></div>
+        <div class="field"><label>Zc₄</label><input type="number" id="m4_Zc4" value="0.229" step="0.001" oninput="calcM4()"></div>
+        <div class="field"><label>Vc₄ (cm³/mol)</label><input type="number" id="m4_Vc4" value="55.9" oninput="calcM4()"></div>
+      </div>
+    </div>
+    <div class="card results">
+      <h3><span class="dot"></span>Resultados mezcla cuaternaria</h3>
+      <div id="m4_results"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 9: F/FSAT -->
+<div class="section" id="s9">
+  <div class="sec-header">
+    <h2>📊 Cociente f / fsat</h2>
+    <p>Calcula la razón de fugacidad sobre fugacidad saturada</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="dot"></span>Caso A — T y P específicos</h3>
+      <div class="field"><label>Componente</label><input type="text" id="ffs_comp" value="Agua" oninput="calcFFS()"></div>
+      <div class="field"><label>T (°C)</label><input type="number" id="ffs_T" value="150" oninput="calcFFS()"></div>
+      <div class="field"><label>P (bar)</label><input type="number" id="ffs_P" value="150" oninput="calcFFS()"></div>
+      <div class="field"><label>PM (g/mol)</label><input type="number" id="ffs_PM" value="18" oninput="calcFFS()"></div>
+      <div class="field"><label>Vsat (cm³/g)</label><input type="number" id="ffs_Vsat" value="1.091" step="0.0001" oninput="calcFFS()"></div>
+      <div class="field"><label>Psat (kPa)</label><input type="number" id="ffs_Psat" value="476" oninput="calcFFS()"></div>
+      <div class="field"><label>R (cm³·kPa / mol·K)</label><input type="number" id="ffs_R" value="8314" readonly></div>
+      <div class="card results" style="margin-top:14px; padding: 14px;">
+        <div id="ffs_resultA"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3><span class="dot"></span>Caso B — T fija, rango de P</h3>
+      <div class="note" style="margin-bottom:12px;">Usa datos de entalpía H y entropía S del Apéndice F (Smith) a dos presiones.</div>
+      <div class="field"><label>Componente</label><input type="text" id="ffsb_comp" value="Agua" oninput="calcFFSB()"></div>
+      <div class="field"><label>T (°C)</label><input type="number" id="ffsb_T" value="400" oninput="calcFFSB()"></div>
+      <div class="field"><label>P₁ (bar)</label><input type="number" id="ffsb_P1" value="100" oninput="calcFFSB()"></div>
+      <div class="field"><label>P₂ (bar)</label><input type="number" id="ffsb_P2" value="2" oninput="calcFFSB()"></div>
+      <div class="field"><label>PM (g/mol)</label><input type="number" id="ffsb_PM" value="18" oninput="calcFFSB()"></div>
+      <div class="field"><label>H₁ (kJ/kg)</label><input type="number" id="ffsb_H1" value="3099.9" oninput="calcFFSB()"></div>
+      <div class="field"><label>S₁ (kJ/kg·K)</label><input type="number" id="ffsb_S1" value="6.2182" step="0.0001" oninput="calcFFSB()"></div>
+      <div class="field"><label>H₂ (kJ/kg)</label><input type="number" id="ffsb_H2" value="3276.7" oninput="calcFFSB()"></div>
+      <div class="field"><label>S₂ (kJ/kg·K)</label><input type="number" id="ffsb_S2" value="8.2226" step="0.0001" oninput="calcFFSB()"></div>
+      <div class="card results" style="margin-top:14px; padding: 14px;">
+        <div id="ffsb_resultB"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <p>🌿 BioThermo Lab · Termodinámica Computacional · IPN UPIIT · Hecho con <span>❤️</span> para Arantza</p>
+  <p style="margin-top:4px; opacity:0.5;">Correlaciones: Lee-Kesler, Pitzer-Curl, Antoine · Ref: Smith, Van Ness & Abbott</p>
+</footer>
+
+<script>
+const R_bar = 83.14; // bar·cm³/(mol·K)
+
+// ─── TAB SYSTEM ───────────────────────────────────────────────
+function showTab(n) {
+  // n=-1 → pestaña "Datos Especie" (primera en DOM, índice 0)
+  const domIdx = (n === -1) ? 0 : n + 1;
+  const tabIdx = n + 1; // tabs están desplazadas +1
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===tabIdx));
+  document.querySelectorAll('.section').forEach((s,i)=>s.classList.toggle('active',i===domIdx));
+}
+
+// ─── HELPER ───────────────────────────────────────────────────
+const fmt = (v, d=4) => isNaN(v)||!isFinite(v)?'—':Number(v).toFixed(d);
+const fmtSci = v => isNaN(v)||!isFinite(v)?'—':v.toExponential(4);
+function ri(label, val, cls='', unit='') {
+  return `<div class="result-item"><span class="result-label">${label}</span><span class="result-value ${cls}">${val} ${unit}</span></div>`;
+}
+
+// Pitzer-Curl functions
+function f0(Tr) { return 5.92714 - 6.09658/Tr - 1.28862*Math.log(Tr) + 0.169347*Math.pow(Tr,6); }
+function f1(Tr) { return 15.2518 - 15.6875/Tr - 13.4721*Math.log(Tr) + 0.43577*Math.pow(Tr,6); }
+function calcOmega(Tn, Pc, Tc) {
+  const Trn = Tn/Tc;
+  return (Math.log(1.01325/Pc) - f0(Trn)) / f1(Trn);
+}
+function calcPsat(Tr, Pc, w) {
+  return Pc * Math.exp(f0(Tr) + w*f1(Tr));
+}
+function calcAntoinePsat(A, B, C, T_K) {
+  if(!A && !B && !C) return null;
+  const T_C = T_K - 273.15;
+  return Math.exp(A - B/(T_C + C)); // kPa
+}
+function linearInterp(X1, X, X2, Y1, Y2) {
+  if(X2===X1) return Y1;
+  return Y1 + (Y2-Y1)*(X-X1)/(X2-X1);
+}
+
+// ─── SECTION 0: ENTALPÍAS IG ─────────────────────────────────
+let igChart = null;
+function calcIG() {
+  const a1 = +document.getElementById('ig_a1').value;
+  const c1 = +document.getElementById('ig_c1').value;
+  const c2 = +document.getElementById('ig_c2').value;
+  const a2 = +document.getElementById('ig_a2').value;
+  const c3 = +document.getElementById('ig_c3').value;
+  const X  = +document.getElementById('ig_x').value;
+
+  const H1 = x => c1*Math.pow(x,3) + c2*Math.pow(x,2) + a1;
+  const H2 = x => c3*Math.pow(x,3) + a2;
+
+  // Point result
+  document.getElementById('ig_results').innerHTML =
+    ri('X evaluado', fmt(X,2)) +
+    ri('H₁(X) [kJ/mol]', fmt(H1(X)), 'highlight') +
+    ri('H₂(X) [kJ/mol]', fmt(H2(X)), 'highlight');
+
+  // Table
+  const xs = [0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1.0];
+  let tbody = '';
+  xs.forEach(x=>{
+    tbody+=`<tr><td>${fmt(x,2)}</td><td class="val">${fmt(H1(x))}</td><td class="val">${fmt(H2(x))}</td></tr>`;
+  });
+  document.getElementById('ig_table').innerHTML = tbody;
+
+  // Chart
+  const labels = xs.map(x=>fmt(x,2));
+  const d1 = xs.map(x=>H1(x));
+  const d2 = xs.map(x=>H2(x));
+  if(igChart) igChart.destroy();
+  igChart = new Chart(document.getElementById('ig_chart').getContext('2d'), {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'H₁ (kJ/mol)', data:d1, borderColor:'#4ade80', backgroundColor:'#4ade8022', tension:0.4, fill:false, borderWidth:2},
+        {label:'H₂ (kJ/mol)', data:d2, borderColor:'#f9a8d4', backgroundColor:'#f9a8d422', tension:0.4, fill:false, borderWidth:2}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{labels:{color:'#e8f5e8',font:{family:'DM Mono'}}},
+               title:{display:true, text:'Entalpías de gases ideales vs fracción molar X', color:'#e8f5e8', font:{family:'DM Serif Display', size:14}}},
+      scales:{
+        x:{ticks:{color:'#a3c5a3'},grid:{color:'#2d3d2d'},title:{display:true,text:'X',color:'#6b8c6b'}},
+        y:{ticks:{color:'#a3c5a3'},grid:{color:'#2d3d2d'},title:{display:true,text:'H (kJ/mol)',color:'#6b8c6b'}}
+      }
+    }
+  });
+}
+
+// ─── SECTION 1: LEE KESLER GAS ────────────────────────────────
+function calcLKG() {
+  const T=+document.getElementById('lkg_T').value, P=+document.getElementById('lkg_P').value;
+  const w=+document.getElementById('lkg_w').value, Pc=+document.getElementById('lkg_Pc').value;
+  const Tc=+document.getElementById('lkg_Tc').value, Tn=+document.getElementById('lkg_Tn').value;
+  const A=+document.getElementById('lkg_A').value, B=+document.getElementById('lkg_B').value, C=+document.getElementById('lkg_C').value;
+
+  const Trn=Tn/Tc, Tr=T/Tc, Pr=P/Pc;
+  const w_calc=calcOmega(Tn,Pc,Tc);
+  const Psat_calc=calcPsat(Tr,Pc,w); // using ω tabla
+  const Psat_wcalc=calcPsat(Tr,Pc,w_calc);
+  const Psat_promedio=(Psat_calc+Psat_wcalc)/2;
+  const Antoine_P=A?calcAntoinePsat(A,B,C,T):null;
+  const condCorr=P>Psat_calc?'Líquido':'Vapor';
+  const condAntoine=Antoine_P?(P>Antoine_P/100?'Líquido':'Vapor'):'—';
+
+  document.getElementById('lkg_results_psat').innerHTML =
+    ri('Trn',fmt(Trn)) + ri('Tr',fmt(Tr)) + ri('Pr',fmt(Pr)) +
+    ri('ω (calc)',fmt(w_calc)) + ri('ω (tabla)',fmt(w)) +
+    ri('Psat (ω tabla) [bar]',fmt(Psat_calc)) +
+    ri('Psat (ω calc) [bar]',fmt(Psat_wcalc)) +
+    ri('Psat promedio [bar]',fmt(Psat_promedio)) +
+    (Antoine_P?ri('Psat Antoine [bar]',fmt(Antoine_P/100)):'') +
+    ri('Condición',`<span class="badge ${condCorr.toLowerCase()}">${condCorr}</span>`,'');
+
+  // Interpolation
+  const tr1_0=+document.getElementById('lkg_tr1_0').value, tr2_0=+document.getElementById('lkg_tr2_0').value;
+  const y1_0=+document.getElementById('lkg_y1_0').value, y2_0=+document.getElementById('lkg_y2_0').value;
+  const tr1_1=+document.getElementById('lkg_tr1_1').value, tr2_1=+document.getElementById('lkg_tr2_1').value;
+  const y1_1=+document.getElementById('lkg_y1_1').value, y2_1=+document.getElementById('lkg_y2_1').value;
+
+  const phi0=linearInterp(tr1_0,Tr,tr2_0,y1_0,y2_0);
+  const phi1=linearInterp(tr1_1,Tr,tr2_1,y1_1,y2_1);
+  const phi=phi0*Math.pow(phi1,w);
+  const f=phi*P;
+
+  document.getElementById('lkg_tr_0').value=fmt(Tr);
+  document.getElementById('lkg_y_0').value=fmt(phi0);
+  document.getElementById('lkg_tr_1').value=fmt(Tr);
+  document.getElementById('lkg_y_1').value=fmt(phi1);
+
+  document.getElementById('lkg_results_final').innerHTML =
+    ri('φ⁰ (interpolado)',fmt(phi0)) + ri('φ¹ (interpolado)',fmt(phi1)) +
+    ri('φ = φ⁰·(φ¹)^ω',fmt(phi),'highlight') +
+    ri('f = φ·P [bar]',fmt(f),'highlight');
+}
+
+// ─── SECTION 2: LEE KESLER LÍQUIDO ────────────────────────────
+function calcLKL() {
+  const T=+document.getElementById('lkl_T').value, P=+document.getElementById('lkl_P').value;
+  const w=+document.getElementById('lkl_w').value, Pc=+document.getElementById('lkl_Pc').value;
+  const Tc=+document.getElementById('lkl_Tc').value, Tn=+document.getElementById('lkl_Tn').value;
+  const Zc=+document.getElementById('lkl_Zc').value, Vc=+document.getElementById('lkl_Vc').value;
+
+  const Trn=Tn/Tc, Tr=T/Tc, Pr=P/Pc;
+  const w_calc=calcOmega(Tn,Pc,Tc);
+  const Psat_calc=calcPsat(Tr,Pc,w);
+  const Psat_wcalc=calcPsat(Tr,Pc,w_calc);
+  const Psat_promedio=(Psat_calc+Psat_wcalc)/2;
+  const Psat_bar=Psat_promedio; // Psat used for Poynting
+  const Prsat=Psat_bar/Pc;
+  const Vl=Vc*Math.pow(Zc,Math.pow(1-Tr,2/7)); // cm³/mol
+  const condCorr=P>Psat_calc?'Líquido':'Vapor';
+
+  document.getElementById('lkl_tr_0').value=fmt(Tr);
+  document.getElementById('lkl_tr_1').value=fmt(Tr);
+
+  const tr1_0=+document.getElementById('lkl_tr1_0').value, tr2_0=+document.getElementById('lkl_tr2_0').value;
+  const y1_0=+document.getElementById('lkl_y1_0').value, y2_0=+document.getElementById('lkl_y2_0').value;
+  const tr1_1=+document.getElementById('lkl_tr1_1').value, tr2_1=+document.getElementById('lkl_tr2_1').value;
+  const y1_1=+document.getElementById('lkl_y1_1').value, y2_1=+document.getElementById('lkl_y2_1').value;
+
+  const phi0=linearInterp(tr1_0,Tr,tr2_0,y1_0,y2_0);
+  const phi1=linearInterp(tr1_1,Tr,tr2_1,y1_1,y2_1);
+  const phi_sat=phi0*Math.pow(phi1,w); // φ at Psat
+  // Poynting correction: f = phi_sat * Psat * exp(Vl*(P-Psat)/(R*T))
+  const f=phi_sat*Psat_bar*Math.exp((Vl*(P-Psat_bar))/(R_bar*T));
+
+  document.getElementById('lkl_y_0').value=fmt(phi0);
+  document.getElementById('lkl_y_1').value=fmt(phi1);
+
+  document.getElementById('lkl_results_psat').innerHTML =
+    ri('Tr',fmt(Tr)) + ri('Pr',fmt(Pr)) + ri('Prsat',fmt(Prsat)) +
+    ri('Psat promedio [bar]',fmt(Psat_promedio)) +
+    ri('Vl (cm³/mol)',fmt(Vl)) + ri('Condición',`<span class="badge ${condCorr.toLowerCase()}">${condCorr}</span>`);
+
+  document.getElementById('lkl_results_final').innerHTML =
+    ri('φ⁰ (interpolado)',fmt(phi0)) + ri('φ¹ (interpolado)',fmt(phi1)) +
+    ri('φ_sat = φ⁰·(φ¹)^ω',fmt(phi_sat)) +
+    ri('f = φ_sat·Psat·exp[Vl(P−Psat)/RT] [bar]',fmt(f),'highlight');
+}
+
+// ─── SECTION 3: VAPOR PITZER ──────────────────────────────────
+function calcPV() {
+  const T=+document.getElementById('pv_T').value, P=+document.getElementById('pv_P').value;
+  const w=+document.getElementById('pv_w').value, Pc=+document.getElementById('pv_Pc').value;
+  const Tc=+document.getElementById('pv_Tc').value, Tn=+document.getElementById('pv_Tn').value;
+  const A=+document.getElementById('pv_A').value, B=+document.getElementById('pv_B').value, C=+document.getElementById('pv_C').value;
+
+  const Trn=Tn/Tc, Tr=T/Tc, Pr=P/Pc;
+  const w_calc=calcOmega(Tn,Pc,Tc);
+  const Psat_calc=calcPsat(Tr,Pc,w);
+  const Psat_wcalc=calcPsat(Tr,Pc,w_calc);
+  const Antoine_P=A?calcAntoinePsat(A,B,C,T):null;
+  const condCorr=P>Psat_calc?'Líquido':'Vapor';
+
+  // Pitzer B0, B1
+  const B0=0.083-0.422/Math.pow(Tr,1.6);
+  const B1=0.139-0.172/Math.pow(Tr,4.2);
+  const lnPhi=(Pr/Tr)*(B0+w*B1);
+  const phi=Math.exp(lnPhi);
+  const f=P*phi;
+
+  document.getElementById('pv_results').innerHTML =
+    ri('Tr',fmt(Tr)) + ri('Pr',fmt(Pr)) +
+    ri('ω (calc)',fmt(w_calc)) + ri('ω (tabla)',fmt(w)) +
+    ri('Psat (ω tabla) [bar]',fmt(Psat_calc)) +
+    (Antoine_P?ri('Psat Antoine [bar]',fmt(Antoine_P/100)):'') +
+    ri('Condición',`<span class="badge ${condCorr.toLowerCase()}">${condCorr}</span>`) +
+    '<div class="sep"></div>' +
+    ri('B⁰',fmt(B0)) + ri('B¹',fmt(B1)) +
+    ri('ln(φ)',fmt(lnPhi)) +
+    ri('φ (coef. fugacidad)',fmt(phi),'highlight') +
+    ri('f = P·φ [bar]',fmt(f),'highlight');
+}
+
+// ─── SECTION 4: LÍQUIDO PITZER ────────────────────────────────
+function calcPL() {
+  const T=+document.getElementById('pl_T').value, P=+document.getElementById('pl_P').value;
+  const w=+document.getElementById('pl_w').value, Pc=+document.getElementById('pl_Pc').value;
+  const Tc=+document.getElementById('pl_Tc').value, Tn=+document.getElementById('pl_Tn').value;
+  const Zc=+document.getElementById('pl_Zc').value, Vc=+document.getElementById('pl_Vc').value;
+  const A=+document.getElementById('pl_A').value, B=+document.getElementById('pl_B').value, C=+document.getElementById('pl_C').value;
+
+  const Trn=Tn/Tc, Tr=T/Tc, Pr=P/Pc;
+  const w_calc=calcOmega(Tn,Pc,Tc);
+  const Psat_wcalc=calcPsat(Tr,Pc,w_calc);
+  const Psat_corr=calcPsat(Tr,Pc,w);
+  const Psat_promedio=(Psat_corr+Psat_wcalc)/2;
+  const Psat_bar=Psat_promedio;
+  const Prsat=Psat_bar/Pc;
+  const Vl=Vc*Math.pow(Zc,Math.pow(1-Tr,2/7));
+
+  // B0, B1 at Psat Tr
+  const B0=0.083-0.422/Math.pow(Tr,1.6);
+  const B1=0.139-0.172/Math.pow(Tr,4.2);
+  const phi_sat=Math.exp((Prsat/Tr)*(B0+w*B1));
+  const f=phi_sat*Psat_bar*Math.exp((Vl*(P-Psat_bar))/(R_bar*T));
+  const condCorr=P>Psat_corr?'Líquido':'Vapor';
+
+  document.getElementById('pl_results').innerHTML =
+    ri('Tr',fmt(Tr)) + ri('Pr',fmt(Pr)) + ri('Prsat',fmt(Prsat)) +
+    ri('Psat promedio [bar]',fmt(Psat_bar)) +
+    ri('Vl (cm³/mol)',fmt(Vl)) +
+    ri('Condición',`<span class="badge ${condCorr.toLowerCase()}">${condCorr}</span>`) +
+    '<div class="sep"></div>' +
+    ri('B⁰',fmt(B0)) + ri('B¹',fmt(B1)) +
+    ri('φ_sat (Pitzer)',fmt(phi_sat)) +
+    ri('f = φ_sat·Psat·exp[Vl(P−Psat)/RT] [bar]',fmt(f),'highlight');
+}
+
+// ─── SECTION 5: HS H2O ────────────────────────────────────────
+function initHS() {
+  const pressures_v = [1, 10, 100, 1000, 4000, 8592.7];
+  const HS_vapor = [[3076.8,10.345],[3076.6,9.282],[3074.5,8.2166],[3052.1,7.1251],[2962,6.3642],[2751,5.7081]];
+  const pressures_l = [8600, 9000, 9500, 10000];
+  let html = '<p class="sec-title">Presiones vapor (kPa) — ingresa H y S</p>';
+  pressures_v.forEach((p,i)=>{
+    html+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px;align-items:end">
+      <div class="field" style="margin:0"><label>P=${p} kPa</label><input type="number" readonly value="${p}" style="background:#0a120a;color:#6b8c6b"></div>
+      <div class="field" style="margin:0"><label>H (kJ/g)</label><input type="number" id="hs_H${i}" value="${HS_vapor[i][0]}" step="0.01" oninput="calcHS()"></div>
+      <div class="field" style="margin:0"><label>S (kJ/g·K)</label><input type="number" id="hs_S${i}" value="${HS_vapor[i][1]}" step="0.0001" oninput="calcHS()"></div>
+    </div>`;
+  });
+  html+='<p class="sec-title" style="margin-top:10px">Presiones líquido (kPa)</p>';
+  pressures_l.forEach((p,i)=>{
+    html+=`<div class="field"><label>P = ${p} kPa (fija)</label></div>`;
+  });
+  document.getElementById('hs_vapor_inputs').innerHTML = html;
+}
+
+function calcHS() {
+  const T=+document.getElementById('hs_T').value;
+  const PM=+document.getElementById('hs_PM').value;
+  const R_J=+document.getElementById('hs_R').value; // J/mol K
+  const Psat=+document.getElementById('hs_Psat').value;
+  const phisat=+document.getElementById('hs_phisat').value;
+  const Vl=+document.getElementById('hs_Vl_input').value;
+  const Rval=+document.getElementById('hs_Rval').value;
+  const H_ref=+document.getElementById('hs_H_ref').value;
+  const S_ref=+document.getElementById('hs_S_ref').value;
+
+  const pressures_v = [1, 10, 100, 1000, 4000, 8592.7];
+  let tbody_v='';
+  pressures_v.forEach((p,i)=>{
+    const Hi=+document.getElementById(`hs_H${i}`).value;
+    const Si=+document.getElementById(`hs_S${i}`).value;
+    const ln_fi_P=(PM/R_J)*(((Hi-H_ref)/T)-(Si-S_ref));
+    const fi=Math.exp(ln_fi_P)*p;
+    const phi=fi/p;
+    tbody_v+=`<tr><td>${p}</td><td class="val">${fmt(ln_fi_P)}</td><td class="val">${fmt(fi)}</td><td class="val">${fmt(phi,6)}</td></tr>`;
+  });
+  document.getElementById('hs_vapor_table').innerHTML=tbody_v;
+
+  // Liquid pressures using Poynting
+  const pressures_l=[8600,9000,9500,10000];
+  let tbody_l='';
+  pressures_l.forEach(p=>{
+    const fi_sat=phisat*Psat;
+    const fi=fi_sat*Math.exp((Vl*(p-Psat))/(Rval*T));
+    const phi=fi/p;
+    tbody_l+=`<tr><td>${p}</td><td class="val">${fmt(fi)}</td><td class="val">${fmt(phi,6)}</td></tr>`;
+  });
+  document.getElementById('hs_liquid_table').innerHTML=tbody_l;
+}
+
+// ─── MIXTURE HELPERS ──────────────────────────────────────────
+function Tc_ij(Tci,Tcj) { return Math.sqrt(Tci*Tcj); }
+function Vc_ij(Vci,Vcj) { return Math.pow((Math.pow(Vci,1/3)+Math.pow(Vcj,1/3))/2,3); }
+function Zc_ij(Zci,Zcj) { return (Zci+Zcj)/2; }
+function w_ij(wi,wj)   { return (wi+wj)/2; }
+function Pc_ij(Zc,T,Vc,R=R_bar) { return Zc*R*T/Vc; }
+function calcBij(T,Tc,Pc,w,R=R_bar) {
+  const Tr=T/Tc;
+  const b0=0.083-0.422/Math.pow(Tr,1.6);
+  const b1=0.139-0.172/Math.pow(Tr,4.2);
+  const Bhat=b0+w*b1;
+  return Bhat*R*Tc/Pc;
+}
+
+// ─── SECTION 6: MEZCLA 2 ──────────────────────────────────────
+function calcM2() {
+  const T=+document.getElementById('m2_T').value, P=+document.getElementById('m2_P').value;
+  let y1=+document.getElementById('m2_y1').value, y2=+document.getElementById('m2_y2').value;
+  if(Math.abs(y1+y2-1)>0.001){y2=1-y1;document.getElementById('m2_y2').value=fmt(y2,3);}
+  const w1=+document.getElementById('m2_w1').value, Pc1=+document.getElementById('m2_Pc1').value;
+  const Tc1=+document.getElementById('m2_Tc1').value, Zc1=+document.getElementById('m2_Zc1').value;
+  const Vc1=+document.getElementById('m2_Vc1').value;
+  const w2=+document.getElementById('m2_w2').value, Pc2=+document.getElementById('m2_Pc2').value;
+  const Tc2=+document.getElementById('m2_Tc2').value, Zc2=+document.getElementById('m2_Zc2').value;
+  const Vc2=+document.getElementById('m2_Vc2').value;
+
+  const Tc12=Tc_ij(Tc1,Tc2), Vc12=Vc_ij(Vc1,Vc2), Zc12=Zc_ij(Zc1,Zc2), w12=w_ij(w1,w2);
+  const Pc12=Zc12*R_bar*Tc12/Vc12;
+
+  const B11=calcBij(T,Tc1,Pc1,w1);
+  const B22=calcBij(T,Tc2,Pc2,w2);
+  const B12=calcBij(T,Tc12,Pc12,w12);
+  const delta12=2*B12-B11-B22;
+  const lnPhi1=(P/(R_bar*T))*(B11+y2*y2*delta12);
+  const lnPhi2=(P/(R_bar*T))*(B22+y1*y1*delta12);
+  const phi1=Math.exp(lnPhi1), phi2=Math.exp(lnPhi2);
+  const f1=phi1*y1*P, f2=phi2*y2*P;
+  const n=document.getElementById('m2_n1').value, n2=document.getElementById('m2_n2').value;
+
+  document.getElementById('m2_results').innerHTML =
+    ri('T (K)',fmt(T,2)) + ri('P (bar)',fmt(P)) + ri('y₁ / y₂',`${fmt(y1,3)} / ${fmt(y2,3)}`) +
+    '<div class="sep"></div>' +
+    ri('Tc₁₂ (K)',fmt(Tc12)) + ri('Pc₁₂ (bar)',fmt(Pc12)) + ri('Zc₁₂',fmt(Zc12)) +
+    ri('Vc₁₂ (cm³/mol)',fmt(Vc12)) + ri('ω₁₂',fmt(w12)) +
+    '<div class="sep"></div>' +
+    ri('B₁₁ (cm³/mol)',fmt(B11)) + ri('B₂₂ (cm³/mol)',fmt(B22)) + ri('B₁₂ (cm³/mol)',fmt(B12)) +
+    ri('δ₁₂',fmt(delta12)) +
+    '<div class="sep"></div>' +
+    ri(`ln(φ₁) — ${n}`,fmt(lnPhi1)) + ri(`φ₁`,fmt(phi1),'highlight') + ri(`f₁ [bar]`,fmt(f1),'highlight') +
+    ri(`ln(φ₂) — ${n2}`,fmt(lnPhi2)) + ri(`φ₂`,fmt(phi2),'highlight') + ri(`f₂ [bar]`,fmt(f2),'highlight');
+}
+
+// ─── SECTION 7: MEZCLA 3 ──────────────────────────────────────
+function calcM3() {
+  const T=+document.getElementById('m3_T').value, P=+document.getElementById('m3_P').value;
+  let y1=+document.getElementById('m3_y1').value, y2=+document.getElementById('m3_y2').value;
+  const y3=1-y1-y2;
+  document.getElementById('m3_y3').value=fmt(y3,4);
+  const props=[
+    {w:+document.getElementById('m3_w1').value,Pc:+document.getElementById('m3_Pc1').value,Tc:+document.getElementById('m3_Tc1').value,Zc:+document.getElementById('m3_Zc1').value,Vc:+document.getElementById('m3_Vc1').value},
+    {w:+document.getElementById('m3_w2').value,Pc:+document.getElementById('m3_Pc2').value,Tc:+document.getElementById('m3_Tc2').value,Zc:+document.getElementById('m3_Zc2').value,Vc:+document.getElementById('m3_Vc2').value},
+    {w:+document.getElementById('m3_w3').value,Pc:+document.getElementById('m3_Pc3').value,Tc:+document.getElementById('m3_Tc3').value,Zc:+document.getElementById('m3_Zc3').value,Vc:+document.getElementById('m3_Vc3').value}
+  ];
+  const ys=[y1,y2,y3];
+  const n=[document.getElementById('m3_n1').value, document.getElementById('m3_n2').value, document.getElementById('m3_n3').value];
+
+  // Build 3x3 B matrix
+  const B=[];
+  for(let i=0;i<3;i++){
+    B.push([]);
+    for(let j=0;j<3;j++){
+      const tci=i===j?props[i].Tc:Tc_ij(props[i].Tc,props[j].Tc);
+      const vci=i===j?props[i].Vc:Vc_ij(props[i].Vc,props[j].Vc);
+      const zci=i===j?props[i].Zc:Zc_ij(props[i].Zc,props[j].Zc);
+      const wi=i===j?props[i].w:w_ij(props[i].w,props[j].w);
+      const pci=zci*R_bar*tci/vci;
+      B[i].push(calcBij(T,tci,pci,wi));
+    }
+  }
+  // Delta arrays
+  const d12=2*B[0][1]-B[0][0]-B[1][1];
+  const d13=2*B[0][2]-B[0][0]-B[2][2];
+  const d23=2*B[1][2]-B[1][1]-B[2][2];
+
+  // ln(phi_k) for 3-component mixture
+  const lnPhi=[];
+  for(let k=0;k<3;k++){
+    let sum=0;
+    for(let i=0;i<3;i++) for(let j=0;j<3;j++){
+      let dij;
+      if(i===j) dij=0;
+      else if((i===0&&j===1)||(i===1&&j===0)) dij=d12;
+      else if((i===0&&j===2)||(i===2&&j===0)) dij=d13;
+      else dij=d23;
+      if(i!==k&&j!==k) sum+=ys[i]*ys[j]*dij;
+    }
+    lnPhi.push((P/(R_bar*T))*(B[k][k]+0.5*sum));
+  }
+
+  const phi=lnPhi.map(lp=>Math.exp(lp));
+  const f=phi.map((p,k)=>p*ys[k]*P);
+
+  let html='';
+  [['B₁₁',B[0][0]],['B₂₂',B[1][1]],['B₃₃',B[2][2]],['B₁₂',B[0][1]],['B₁₃',B[0][2]],['B₂₃',B[1][2]]].forEach(([l,v])=>html+=ri(l+' (cm³/mol)',fmt(v)));
+  html+=ri('δ₁₂',fmt(d12))+ri('δ₁₃',fmt(d13))+ri('δ₂₃',fmt(d23));
+  html+='<div class="sep"></div>';
+  for(let k=0;k<3;k++) html+=ri(`ln(φ${k+1}) — ${n[k]}`,fmt(lnPhi[k]))+ri(`φ${k+1}`,fmt(phi[k]),'highlight')+ri(`f${k+1} [bar]`,fmt(f[k]),'highlight');
+  document.getElementById('m3_results').innerHTML=html;
+}
+
+// ─── SECTION 8: MEZCLA 4 ──────────────────────────────────────
+function calcM4() {
+  const T=+document.getElementById('m4_T').value, P=+document.getElementById('m4_P').value;
+  let ys=[+document.getElementById('m4_y1').value,+document.getElementById('m4_y2').value,+document.getElementById('m4_y3').value,0];
+  ys[3]=1-ys[0]-ys[1]-ys[2];
+  document.getElementById('m4_y4').value=fmt(ys[3],4);
+
+  const props=[
+    {w:+document.getElementById('m4_w1').value,Tc:+document.getElementById('m4_Tc1').value,Pc:+document.getElementById('m4_Pc1').value,Zc:+document.getElementById('m4_Zc1').value,Vc:+document.getElementById('m4_Vc1').value},
+    {w:+document.getElementById('m4_w2').value,Tc:+document.getElementById('m4_Tc2').value,Pc:+document.getElementById('m4_Pc2').value,Zc:+document.getElementById('m4_Zc2').value,Vc:+document.getElementById('m4_Vc2').value},
+    {w:+document.getElementById('m4_w3').value,Tc:+document.getElementById('m4_Tc3').value,Pc:+document.getElementById('m4_Pc3').value,Zc:+document.getElementById('m4_Zc3').value,Vc:+document.getElementById('m4_Vc3').value},
+    {w:+document.getElementById('m4_w4').value,Tc:+document.getElementById('m4_Tc4').value,Pc:+document.getElementById('m4_Pc4').value,Zc:+document.getElementById('m4_Zc4').value,Vc:+document.getElementById('m4_Vc4').value}
+  ];
+  const names=['Hidrógeno','CO','Metano','Agua'];
+
+  const B=[];
+  for(let i=0;i<4;i++){
+    B.push([]);
+    for(let j=0;j<4;j++){
+      const tci=i===j?props[i].Tc:Tc_ij(props[i].Tc,props[j].Tc);
+      const vci=i===j?props[i].Vc:Vc_ij(props[i].Vc,props[j].Vc);
+      const zci=i===j?props[i].Zc:Zc_ij(props[i].Zc,props[j].Zc);
+      const wi=i===j?props[i].w:w_ij(props[i].w,props[j].w);
+      const pci=zci*R_bar*tci/vci;
+      B[i].push(calcBij(T,tci,pci,wi));
+    }
+  }
+
+  const lnPhi=[];
+  for(let k=0;k<4;k++){
+    let Bm=0;
+    for(let i=0;i<4;i++) for(let j=0;j<4;j++) Bm+=ys[i]*ys[j]*B[i][j];
+    let sum=0;
+    for(let j=0;j<4;j++) sum+=ys[j]*B[k][j];
+    lnPhi.push((P/(R_bar*T))*(2*sum-Bm));
+  }
+
+  const phi=lnPhi.map(lp=>Math.exp(lp));
+  const f=phi.map((p,k)=>p*ys[k]*P);
+
+  let html='<p class="sec-title">Segundos coeficientes B (diagonal)</p>';
+  for(let i=0;i<4;i++) html+=ri(`B${i+1}${i+1} [cm³/mol]`,fmt(B[i][i]));
+  html+='<div class="sep"></div>';
+  const pairs=[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
+  pairs.forEach(([i,j])=>html+=ri(`B${i+1}${j+1} [cm³/mol]`,fmt(B[i][j])));
+  html+='<div class="sep"></div>';
+  for(let k=0;k<4;k++) html+=ri(`ln(φ${k+1}) — ${names[k]}`,fmt(lnPhi[k]))+ri(`φ${k+1}`,fmt(phi[k]),'highlight')+ri(`f${k+1} [bar]`,fmt(f[k]),'highlight');
+  document.getElementById('m4_results').innerHTML=html;
+}
+
+// ─── SECTION 9: F/FSAT ────────────────────────────────────────
+function calcFFS() {
+  const T_C=+document.getElementById('ffs_T').value;
+  const P_bar=+document.getElementById('ffs_P').value;
+  const PM=+document.getElementById('ffs_PM').value;
+  const Vsat_cg=+document.getElementById('ffs_Vsat').value;
+  const Psat_kPa=+document.getElementById('ffs_Psat').value;
+  const R=+document.getElementById('ffs_R').value;
+
+  const T_K=T_C+273.15;
+  const P_kPa=P_bar*100;
+  const Vsat_mol=Vsat_cg*PM; // cm³/mol
+  const f_fsat=Math.exp((Vsat_mol*(P_kPa-Psat_kPa))/(R*T_K));
+
+  document.getElementById('ffs_resultA').innerHTML =
+    ri('T (K)',fmt(T_K,2)) + ri('P (kPa)',fmt(P_kPa)) +
+    ri('Vsat (cm³/mol)',fmt(Vsat_mol)) +
+    ri('f / fsat',fmt(f_fsat,6),'highlight');
+}
+
+function calcFFSB() {
+  const T_C=+document.getElementById('ffsb_T').value;
+  const P1=+document.getElementById('ffsb_P1').value; // bar
+  const P2=+document.getElementById('ffsb_P2').value; // bar
+  const PM=+document.getElementById('ffsb_PM').value;
+  const H1=+document.getElementById('ffsb_H1').value; // kJ/kg
+  const S1=+document.getElementById('ffsb_S1').value;
+  const H2=+document.getElementById('ffsb_H2').value;
+  const S2=+document.getElementById('ffsb_S2').value;
+  const T_K=T_C+273.15;
+  const P1_kPa=P1*100, P2_kPa=P2*100;
+
+  // f/fsat = exp((PM/R)*(((H1-H2)/T)-(S1-S2)))
+  // Using R in kJ/(kmol·K) = 8.31447 kJ/kmol·K = 8314.47 J/kmol·K
+  const R_kJ=8.31447; // kJ/kmol·K → since H and S are in kJ/kg, use PM in kg/kmol → PM/1000 in kg/mol? No.
+  // From Excel: f|fsat = EXP(((PM/R_kJ/kmol)*(((H1-H2)/T)-(S1-S2))))
+  // PM in g/mol, R=8.31447 kJ/kmol·K = 8.31447 J/mol·K, H in kJ/kg, S in kJ/kg·K
+  // (PM g/mol)*(1 kg/1000g)*(kJ/kg) = PM/1000 kJ/mol → need R in kJ/mol·K = 0.00831447
+  // Formula: ln(f/fsat) = (PM/R)*(ΔH/T - ΔS) where PM in kg/kmol, R in kJ/kmol·K
+  // = (PM_kgkmol/R_kJkmolK) * ((H1-H2)/T - (S1-S2))
+  const ln_f_fsat=(PM/R_kJ)*(((H1-H2)/T_K)-(S1-S2));
+  const f_fsat=Math.exp(ln_f_fsat);
+
+  document.getElementById('ffsb_resultB').innerHTML =
+    ri('T (K)',fmt(T_K,2)) +
+    ri('ΔH/T (kJ/kg)',fmt((H1-H2)/T_K,6)) +
+    ri('ΔS (kJ/kg·K)',fmt(S1-S2,6)) +
+    ri('ln(f/fsat)',fmt(ln_f_fsat,6)) +
+    ri('f / fsat',fmt(f_fsat,6),'highlight');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BASE DE DATOS DE COMPUESTOS (Tabla B.1 + B.2 – Smith, 7ª ed.)
+// Campos: Tc[K], Pc[bar], w(omega), Zc, Vc[cm³/mol], Tn[K], A, B, C (Antoine ln Psat/kPa)
+// ═══════════════════════════════════════════════════════════════
+const COMPOUNDS = [
+  // ── Parafinas ───────────────────────────────────────────────
+  {n:'Metano',       Tc:190.6, Pc:45.99, w:0.012, Zc:0.286, Vc:98.6,  Tn:111.4, A:null,    B:null,    C:null},
+  {n:'Etano',        Tc:305.3, Pc:48.72, w:0.100, Zc:0.279, Vc:145.5, Tn:184.6, A:null,    B:null,    C:null},
+  {n:'Propano',      Tc:369.8, Pc:42.48, w:0.152, Zc:0.276, Vc:200.0, Tn:231.1, A:null,    B:null,    C:null},
+  {n:'n-Butano',     Tc:425.1, Pc:37.96, w:0.200, Zc:0.274, Vc:255,   Tn:272.7, A:13.6608, B:2154.70, C:238.789},
+  {n:'iso-Butano',   Tc:408.1, Pc:36.48, w:0.181, Zc:0.282, Vc:262.7, Tn:261.4, A:13.8254, B:2181.79, C:248.870},
+  {n:'n-Pentano',    Tc:469.7, Pc:33.70, w:0.252, Zc:0.270, Vc:313,   Tn:309.2, A:13.7667, B:2451.88, C:232.014},
+  {n:'n-Hexano',     Tc:507.6, Pc:30.25, w:0.301, Zc:0.266, Vc:371,   Tn:341.9, A:13.8193, B:2696.04, C:224.317},
+  {n:'n-Heptano',    Tc:540.2, Pc:27.40, w:0.350, Zc:0.261, Vc:428,   Tn:371.6, A:13.8622, B:2910.26, C:216.432},
+  {n:'n-Octano',     Tc:568.7, Pc:24.90, w:0.400, Zc:0.256, Vc:486,   Tn:398.8, A:13.9346, B:3123.13, C:209.635},
+  {n:'n-Nonano',     Tc:594.6, Pc:22.90, w:0.444, Zc:0.252, Vc:544,   Tn:424.0, A:13.9854, B:3311.19, C:202.694},
+  {n:'n-Decano',     Tc:617.7, Pc:21.10, w:0.492, Zc:0.247, Vc:600,   Tn:447.3, A:13.9748, B:3442.76, C:193.858},
+  {n:'iso-Octano',   Tc:544.0, Pc:25.68, w:0.302, Zc:0.266, Vc:468,   Tn:372.4, A:13.6703, B:2896.31, C:220.767},
+  // ── Cicloalcanos ────────────────────────────────────────────
+  {n:'Ciclopentano', Tc:511.8, Pc:45.02, w:0.196, Zc:0.273, Vc:258,   Tn:322.4, A:13.9727, B:2653.90, C:234.510},
+  {n:'Ciclohexano',  Tc:553.6, Pc:40.73, w:0.210, Zc:0.273, Vc:308,   Tn:353.9, A:13.6568, B:2723.44, C:220.618},
+  {n:'Metilciclopentano', Tc:532.8, Pc:37.85, w:0.230, Zc:0.272, Vc:319, Tn:345.0, A:null, B:null, C:null},
+  {n:'Metilciclohexano',  Tc:572.2, Pc:34.71, w:0.235, Zc:0.269, Vc:368, Tn:374.1, A:null, B:null, C:null},
+  // ── Alquenos ────────────────────────────────────────────────
+  {n:'Etileno',      Tc:282.3, Pc:50.40, w:0.087, Zc:0.281, Vc:131,   Tn:169.4, A:null,    B:null,    C:null},
+  {n:'Propileno',    Tc:365.6, Pc:46.65, w:0.140, Zc:0.289, Vc:188.4, Tn:225.5, A:null,    B:null,    C:null},
+  {n:'1-Buteno',     Tc:420.0, Pc:40.43, w:0.191, Zc:0.277, Vc:239.3, Tn:266.9, A:null,    B:null,    C:null},
+  {n:'cis-2-Buteno', Tc:435.6, Pc:42.43, w:0.205, Zc:0.273, Vc:233.8, Tn:276.9, A:null,    B:null,    C:null},
+  {n:'trans-2-Buteno',Tc:428.6, Pc:41.00, w:0.218, Zc:0.275, Vc:237.7, Tn:274.0, A:null,  B:null,    C:null},
+  {n:'1-Hexeno',     Tc:504.0, Pc:31.40, w:0.280, Zc:0.265, Vc:354,   Tn:336.3, A:null,    B:null,    C:null},
+  {n:'Isobutileno',  Tc:417.9, Pc:40.00, w:0.194, Zc:0.275, Vc:238.9, Tn:266.3, A:null,    B:null,    C:null},
+  {n:'1,3-Butadieno',Tc:425.2, Pc:42.77, w:0.190, Zc:0.267, Vc:220.4, Tn:268.7, A:null,    B:null,    C:null},
+  {n:'Acetileno',    Tc:308.3, Pc:61.39, w:0.187, Zc:0.271, Vc:113,   Tn:189.4, A:null,    B:null,    C:null},
+  // ── Aromáticos ──────────────────────────────────────────────
+  {n:'Benceno',      Tc:562.2, Pc:48.98, w:0.210, Zc:0.271, Vc:259,   Tn:353.2, A:13.7819, B:2726.81, C:217.572},
+  {n:'Tolueno',      Tc:591.8, Pc:41.06, w:0.262, Zc:0.264, Vc:316,   Tn:383.8, A:13.9320, B:3056.96, C:217.625},
+  {n:'Etilbenceno',  Tc:617.2, Pc:36.06, w:0.303, Zc:0.263, Vc:374,   Tn:409.4, A:13.9726, B:3259.93, C:212.300},
+  {n:'o-Xileno',     Tc:630.3, Pc:37.34, w:0.310, Zc:0.263, Vc:369,   Tn:417.6, A:14.0415, B:3358.79, C:212.041},
+  {n:'m-Xileno',     Tc:617.1, Pc:35.36, w:0.326, Zc:0.259, Vc:376,   Tn:412.3, A:14.1387, B:3381.81, C:216.120},
+  {n:'p-Xileno',     Tc:616.2, Pc:35.11, w:0.322, Zc:0.260, Vc:379,   Tn:411.5, A:14.0579, B:3331.45, C:214.627},
+  {n:'Estireno',     Tc:636.0, Pc:38.40, w:0.297, Zc:0.256, Vc:352,   Tn:418.3, A:null,    B:null,    C:null},
+  {n:'Naftaleno',    Tc:748.4, Pc:40.51, w:0.302, Zc:0.269, Vc:413,   Tn:491.2, A:null,    B:null,    C:null},
+  {n:'Ciclohexeno',  Tc:560.4, Pc:43.50, w:0.212, Zc:0.272, Vc:291,   Tn:356.1, A:null,    B:null,    C:null},
+  // ── Aldehídos, Cetonas ──────────────────────────────────────
+  {n:'Acetaldehído', Tc:466.0, Pc:55.50, w:0.291, Zc:0.221, Vc:154,   Tn:294.0, A:null,    B:null,    C:null},
+  {n:'Acetona',      Tc:508.2, Pc:47.01, w:0.307, Zc:0.233, Vc:209,   Tn:329.4, A:14.3145, B:2756.22, C:228.060},
+  {n:'Metil etil cetona', Tc:535.5, Pc:41.50, w:0.323, Zc:0.249, Vc:267, Tn:352.8, A:14.1334, B:2838.24, C:218.690},
+  // ── Alcoholes ───────────────────────────────────────────────
+  {n:'Metanol',      Tc:512.6, Pc:80.97, w:0.564, Zc:0.224, Vc:118,   Tn:337.9, A:16.5785, B:3638.27, C:239.500},
+  {n:'Etanol',       Tc:513.9, Pc:61.48, w:0.645, Zc:0.240, Vc:167,   Tn:351.4, A:16.8958, B:3795.17, C:230.918},
+  {n:'1-Propanol',   Tc:536.8, Pc:51.75, w:0.622, Zc:0.254, Vc:219,   Tn:370.4, A:16.1154, B:3483.67, C:205.807},
+  {n:'2-Propanol',   Tc:508.3, Pc:47.62, w:0.668, Zc:0.248, Vc:220,   Tn:355.4, A:16.6796, B:3640.20, C:219.610},
+  {n:'1-Butanol',    Tc:563.1, Pc:44.23, w:0.594, Zc:0.260, Vc:275,   Tn:390.8, A:15.3144, B:3212.43, C:182.739},
+  {n:'1-Hexanol',    Tc:611.4, Pc:35.10, w:0.579, Zc:0.263, Vc:381,   Tn:430.6, A:null,    B:null,    C:null},
+  {n:'Fenol',        Tc:694.3, Pc:61.30, w:0.444, Zc:0.243, Vc:229,   Tn:455.0, A:14.4387, B:3507.80, C:175.400},
+  {n:'Etilenglicol', Tc:719.7, Pc:77.00, w:0.487, Zc:0.246, Vc:191.0, Tn:470.5, A:15.7567, B:4187.46, C:178.650},
+  // ── Ácidos ──────────────────────────────────────────────────
+  {n:'Ácido acético', Tc:592.0, Pc:57.86, w:0.467, Zc:0.211, Vc:179.7, Tn:391.1, A:15.0717, B:3580.80, C:224.650},
+  // ── Éteres ──────────────────────────────────────────────────
+  {n:'Éter dietílico', Tc:466.7, Pc:36.40, w:0.281, Zc:0.263, Vc:280, Tn:307.6, A:14.0735, B:2511.29, C:231.200},
+  {n:'Éter metil t-butílico', Tc:497.1, Pc:34.30, w:0.266, Zc:0.273, Vc:329, Tn:328.4, A:null, B:null, C:null},
+  // ── Ésteres ─────────────────────────────────────────────────
+  {n:'Acetato de metilo', Tc:506.6, Pc:47.50, w:0.331, Zc:0.257, Vc:228, Tn:330.1, A:14.2456, B:2662.78, C:219.690},
+  {n:'Acetato de etilo',  Tc:523.3, Pc:38.80, w:0.366, Zc:0.255, Vc:286, Tn:350.2, A:null,    B:null,    C:null},
+  // ── Compuestos nitrogenados ──────────────────────────────────
+  {n:'Acetonitrilo',  Tc:545.5, Pc:48.30, w:0.338, Zc:0.184, Vc:173,  Tn:354.8, A:14.8950, B:3413.10, C:250.523},
+  {n:'Nitrometano',   Tc:588.2, Pc:63.10, w:0.348, Zc:0.223, Vc:173,  Tn:374.4, A:14.7513, B:3331.70, C:227.600},
+  {n:'Metilamina',    Tc:430.1, Pc:74.60, w:0.281, Zc:0.321, Vc:154,  Tn:266.8, A:null,    B:null,    C:null},
+  {n:'Etilamina',     Tc:456.2, Pc:56.20, w:0.285, Zc:0.307, Vc:207,  Tn:289.7, A:null,    B:null,    C:null},
+  // ── Compuestos halogenados ───────────────────────────────────
+  {n:'Tetracloruro de carbono', Tc:556.4, Pc:45.60, w:0.193, Zc:0.272, Vc:276, Tn:349.8, A:14.0572, B:2914.23, C:232.148},
+  {n:'Cloroformo',    Tc:536.4, Pc:54.72, w:0.222, Zc:0.293, Vc:239,  Tn:334.3, A:13.7324, B:2548.74, C:218.552},
+  {n:'Diclorometano', Tc:510.0, Pc:60.80, w:0.199, Zc:0.265, Vc:185,  Tn:312.9, A:13.9891, B:2463.93, C:223.240},
+  {n:'Cloruro de metilo', Tc:416.3, Pc:66.80, w:0.153, Zc:0.276, Vc:143, Tn:249.1, A:null, B:null, C:null},
+  {n:'Clorobenceno',  Tc:632.4, Pc:45.20, w:0.250, Zc:0.265, Vc:308,  Tn:404.9, A:13.8635, B:3174.78, C:211.700},
+  {n:'Tetrafluoroetano', Tc:374.2, Pc:40.60, w:0.327, Zc:0.258, Vc:198.0, Tn:247.1, A:null, B:null, C:null},
+  // ── Gases inorgánicos ────────────────────────────────────────
+  {n:'Hidrógeno',     Tc:33.19, Pc:13.13, w:-0.216, Zc:0.305, Vc:64.1,  Tn:20.4,  A:null, B:null, C:null},
+  {n:'Oxígeno',       Tc:154.6, Pc:50.43, w:0.022,  Zc:0.288, Vc:73.4,  Tn:90.2,  A:null, B:null, C:null},
+  {n:'Nitrógeno',     Tc:126.2, Pc:34.00, w:0.038,  Zc:0.289, Vc:89.2,  Tn:77.3,  A:null, B:null, C:null},
+  {n:'Argón',         Tc:150.9, Pc:48.98, w:0.000,  Zc:0.291, Vc:74.6,  Tn:87.3,  A:null, B:null, C:null},
+  {n:'Cloro',         Tc:417.2, Pc:77.10, w:0.069,  Zc:0.265, Vc:124,   Tn:239.1, A:null, B:null, C:null},
+  {n:'Monóxido de carbono', Tc:132.9, Pc:34.99, w:0.048, Zc:0.299, Vc:93.4, Tn:81.7, A:null, B:null, C:null},
+  {n:'Dióxido de carbono',  Tc:304.2, Pc:73.83, w:0.224, Zc:0.274, Vc:94.0, Tn:null, A:null, B:null, C:null},
+  {n:'Sulfuro de hidrógeno', Tc:373.5, Pc:89.63, w:0.094, Zc:0.284, Vc:98.5, Tn:212.8, A:null, B:null, C:null},
+  {n:'Dióxido de azufre',   Tc:430.8, Pc:78.84, w:0.245, Zc:0.269, Vc:122,  Tn:263.1, A:null, B:null, C:null},
+  {n:'Trióxido de azufre',  Tc:490.9, Pc:82.10, w:0.424, Zc:0.255, Vc:127,  Tn:317.9, A:null, B:null, C:null},
+  {n:'Amoniaco',      Tc:405.7, Pc:112.80, w:0.253, Zc:0.242, Vc:72.5,  Tn:239.7, A:null, B:null, C:null},
+  {n:'Agua',          Tc:647.1, Pc:220.55, w:0.345, Zc:0.229, Vc:55.9,  Tn:373.2, A:16.3872, B:3885.70, C:230.170},
+  {n:'Cloruro de hidrógeno', Tc:324.7, Pc:83.10, w:0.132, Zc:0.249, Vc:81, Tn:188.2, A:null, B:null, C:null},
+  {n:'Óxido nítrico', Tc:180.2, Pc:64.80, w:0.583, Zc:0.251, Vc:58.0,  Tn:121.4, A:null, B:null, C:null},
+  {n:'Óxido nitroso', Tc:309.6, Pc:72.45, w:0.141, Zc:0.274, Vc:97.4,  Tn:184.7, A:null, B:null, C:null},
+  {n:'Cianuro de hidrógeno', Tc:456.7, Pc:53.90, w:0.410, Zc:0.197, Vc:139, Tn:298.9, A:null, B:null, C:null},
+  {n:'Helio',         Tc:5.2,   Pc:2.28,  w:-0.390, Zc:0.302, Vc:57.3,  Tn:4.2,   A:null, B:null, C:null},
+  {n:'Kriptón',       Tc:209.4, Pc:55.02, w:0.000,  Zc:0.288, Vc:91.2,  Tn:119.8, A:null, B:null, C:null},
+  {n:'Xenón',         Tc:289.7, Pc:58.40, w:0.000,  Zc:0.286, Vc:118.0, Tn:165.0, A:null, B:null, C:null},
+  // ── Otros ───────────────────────────────────────────────────
+  {n:'Formaldehído',  Tc:408.0, Pc:65.90, w:0.282, Zc:0.223, Vc:115,   Tn:254.1, A:null, B:null, C:null},
+  {n:'Bifenilo',      Tc:789.3, Pc:38.50, w:0.365, Zc:0.295, Vc:502,   Tn:528.2, A:null, B:null, C:null},
+  {n:'Disulfuro de carbono', Tc:552.0, Pc:79.00, w:0.111, Zc:0.275, Vc:160, Tn:319.4, A:null, B:null, C:null},
+  {n:'n-Eicosano',    Tc:null,  Pc:null,  w:null,  Zc:null,  Vc:null,  Tn:343.6, A:14.4575, B:4680.46, C:132.100},
+  {n:'1,4-Dioxeno',   Tc:null,  Pc:null,  w:null,  Zc:null,  Vc:null,  Tn:101.3, A:15.0967, B:3579.78, C:240.337},
+  {n:'n-Heptano',     Tc:540.2, Pc:27.40, w:0.350, Zc:0.261, Vc:428,   Tn:371.6, A:13.8622, B:2910.26, C:216.432},
+];
+
+// ── Normalizar texto para comparación (quitar acentos, minúsculas) ──
+function normalizeStr(s){
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[-\s]+/g,' ').trim();
+}
+
+// ── Buscar compuestos (devuelve array ordenado por relevancia) ──
+function searchCompounds(query){
+  if(!query || query.length < 2) return [];
+  const q = normalizeStr(query);
+  return COMPOUNDS
+    .filter(c => normalizeStr(c.n).includes(q))
+    .sort((a,b)=>{
+      const an=normalizeStr(a.n), bn=normalizeStr(b.n);
+      // Primero los que empiezan con la query
+      const startA = an.startsWith(q)?0:1;
+      const startB = bn.startsWith(q)?0:1;
+      return startA - startB || an.localeCompare(bn);
+    })
+    .slice(0,8);
+}
+
+// ── Rellenar campos de un módulo con datos del compuesto ──
+function fillCompound(compound, prefix, calcFn){
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if(el && val !== null && val !== undefined) el.value = val;
+  };
+  set(prefix+'_Tc', compound.Tc);
+  set(prefix+'_Pc', compound.Pc);
+  set(prefix+'_w',  compound.w);
+  set(prefix+'_Zc', compound.Zc);
+  set(prefix+'_Vc', compound.Vc);
+  set(prefix+'_Tn', compound.Tn);
+  if(compound.A !== null){ set(prefix+'_A', compound.A); set(prefix+'_B', compound.B); set(prefix+'_C', compound.C); }
+  if(calcFn) calcFn();
+}
+
+// ── Crear widget de autocompletado para una sección ──
+function setupAutocomplete(containerId, prefix, calcFn){
+  const container = document.getElementById(containerId);
+  if(!container) return;
+
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'position:relative;margin-bottom:1rem;';
+
+  wrapper.innerHTML = `
+    <label style="display:block;font-size:0.8rem;color:var(--mint);margin-bottom:0.4rem;font-family:'DM Mono',monospace;letter-spacing:0.05em;">
+      🔍 Buscar compuesto (autocompletar)
+    </label>
+    <div style="position:relative;">
+      <input type="text" id="ac_${prefix}"
+        placeholder="Ej: agua, benceno, metano..."
+        style="width:100%;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);padding:0.55rem 0.9rem;font-size:0.9rem;font-family:'Nunito',sans-serif;outline:none;transition:border-color .2s;"
+        autocomplete="off"
+      >
+      <div id="ac_list_${prefix}"
+        style="display:none;position:absolute;z-index:999;width:100%;background:#1a2e1a;border:1px solid var(--green2);border-top:none;border-radius:0 0 var(--r) var(--r);max-height:260px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.5);">
+      </div>
+    </div>
+    <div id="ac_badge_${prefix}" style="display:none;margin-top:0.4rem;padding:0.3rem 0.7rem;background:rgba(110,231,183,0.08);border:1px solid var(--green2);border-radius:20px;font-size:0.78rem;color:var(--mint);font-family:'DM Mono',monospace;display:inline-flex;align-items:center;gap:0.4rem;">
+      <span>✅</span><span id="ac_badge_text_${prefix}"></span>
+    </div>
+  `;
+  container.insertBefore(wrapper, container.firstChild);
+
+  const inp  = document.getElementById('ac_'+prefix);
+  const list = document.getElementById('ac_list_'+prefix);
+  const badge= document.getElementById('ac_badge_'+prefix);
+  const badgeTxt = document.getElementById('ac_badge_text_'+prefix);
+
+  inp.addEventListener('input', ()=>{
+    const results = searchCompounds(inp.value);
+    if(results.length === 0){ list.style.display='none'; return; }
+    list.innerHTML = results.map((c,i)=>`
+      <div class="ac-item" data-idx="${i}"
+        style="padding:0.55rem 0.9rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.88rem;color:var(--text);transition:background .15s;"
+        onmouseover="this.style.background='rgba(110,231,183,0.12)'"
+        onmouseout="this.style.background=''"
+        onmousedown="event.preventDefault()">
+        <span style="color:var(--mint);font-weight:600;">${c.n}</span>
+        <span style="color:var(--text3);font-size:0.77rem;margin-left:0.5rem;">
+          Tc=${c.Tc!=null?c.Tc+'K':'—'} · Pc=${c.Pc!=null?c.Pc+' bar':'—'} · ω=${c.w!=null?c.w:'—'}
+        </span>
+      </div>`).join('');
+    list.style.display='block';
+
+    list.querySelectorAll('.ac-item').forEach((el,i)=>{
+      el.addEventListener('click',()=>{
+        const c = results[i];
+        inp.value = c.n;
+        list.style.display='none';
+        badgeTxt.textContent = `${c.n} cargado`;
+        badge.style.display='inline-flex';
+        fillCompound(c, prefix, calcFn);
+      });
+    });
+  });
+
+  inp.addEventListener('blur', ()=>{ setTimeout(()=>list.style.display='none', 150); });
+  inp.addEventListener('focus', ()=>{ if(inp.value.length>=2) inp.dispatchEvent(new Event('input')); });
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+window.addEventListener('load', ()=>{
+  calcIG();
+  calcLKG();
+  calcLKL();
+  calcPV();
+  calcPL();
+  initHS();
+  calcHS();
+  calcM2();
+  calcM3();
+  calcM4();
+  calcFFS();
+  calcFFSB();
+});
+
+// ═══════════════════════════════════════════════════════════════
+// BASE DE DATOS ENRIQUECIDA – Tabla B.1 + B.2 + C.1 + C.4 (Smith 7ª ed.)
+// Campos extra: Hf[J/mol], Gf[J/mol], estado, CpA, CpB(×10³), CpC(×10⁶), CpD(×10⁻⁵), Tmax_Cp
+// ═══════════════════════════════════════════════════════════════
+const SPECIES_DB = [
+  // ── Parafinas ──
+  {n:'Metano',    fm:'CH₄',   estado:'g', Tc:190.6,Pc:45.99,w:0.012,Zc:0.286,Vc:98.6, Tn:111.4,
+   Hf:-74520,  Gf:-50460,  CpA:1.702,  CpB:9.081,  CpC:-2.164, CpD:0,      Tmax:1500, A:null,B:null,C:null},
+  {n:'Etano',     fm:'C₂H₆',  estado:'g', Tc:305.3,Pc:48.72,w:0.100,Zc:0.279,Vc:145.5,Tn:184.6,
+   Hf:-83820,  Gf:-31855,  CpA:1.131,  CpB:19.225, CpC:-5.561, CpD:0,      Tmax:1500, A:null,B:null,C:null},
+  {n:'Propano',   fm:'C₃H₈',  estado:'g', Tc:369.8,Pc:42.48,w:0.152,Zc:0.276,Vc:200.0,Tn:231.1,
+   Hf:-104680, Gf:-24290,  CpA:1.213,  CpB:28.785, CpC:-8.824, CpD:0,      Tmax:1500, A:null,B:null,C:null},
+  {n:'n-Butano',  fm:'C₄H₁₀', estado:'g', Tc:425.1,Pc:37.96,w:0.200,Zc:0.274,Vc:255,  Tn:272.7,
+   Hf:-125790, Gf:-16570,  CpA:1.935,  CpB:36.915, CpC:-11.402,CpD:0,      Tmax:1500, A:13.6608,B:2154.70,C:238.789},
+  {n:'iso-Butano',fm:'C₄H₁₀', estado:'g', Tc:408.1,Pc:36.48,w:0.181,Zc:0.282,Vc:262.7,Tn:261.4,
+   Hf:null,   Gf:null,    CpA:1.677,  CpB:37.853, CpC:-11.945,CpD:0,      Tmax:1500, A:13.8254,B:2181.79,C:248.870},
+  {n:'n-Pentano', fm:'C₅H₁₂', estado:'g', Tc:469.7,Pc:33.70,w:0.252,Zc:0.270,Vc:313,  Tn:309.2,
+   Hf:-146760, Gf:-8650,   CpA:2.464,  CpB:45.351, CpC:-14.111,CpD:0,      Tmax:1500, A:13.7667,B:2451.88,C:232.014},
+  {n:'n-Hexano',  fm:'C₆H₁₄', estado:'g', Tc:507.6,Pc:30.25,w:0.301,Zc:0.266,Vc:371,  Tn:341.9,
+   Hf:-166920, Gf:150,     CpA:3.025,  CpB:53.722, CpC:-16.791,CpD:0,      Tmax:1500, A:13.8193,B:2696.04,C:224.317},
+  {n:'n-Heptano', fm:'C₇H₁₆', estado:'g', Tc:540.2,Pc:27.40,w:0.350,Zc:0.261,Vc:428,  Tn:371.6,
+   Hf:-187780, Gf:8260,    CpA:3.570,  CpB:62.127, CpC:-19.486,CpD:0,      Tmax:1500, A:13.8622,B:2910.26,C:216.432},
+  {n:'n-Octano',  fm:'C₈H₁₈', estado:'g', Tc:568.7,Pc:24.90,w:0.400,Zc:0.256,Vc:486,  Tn:398.8,
+   Hf:-208750, Gf:16260,   CpA:4.108,  CpB:70.567, CpC:-22.208,CpD:0,      Tmax:1500, A:13.9346,B:3123.13,C:209.635},
+  {n:'n-Nonano',  fm:'C₉H₂₀', estado:'g', Tc:594.6,Pc:22.90,w:0.444,Zc:0.252,Vc:544,  Tn:424.0,
+   Hf:null,   Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:13.9854,B:3311.19,C:202.694},
+  {n:'n-Decano',  fm:'C₁₀H₂₂',estado:'g', Tc:617.7,Pc:21.10,w:0.492,Zc:0.247,Vc:600,  Tn:447.3,
+   Hf:null,   Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:13.9748,B:3442.76,C:193.858},
+  // ── Cicloalcanos ──
+  {n:'Ciclopentano',fm:'C₅H₁₀',estado:'g',Tc:511.8,Pc:45.02,w:0.196,Zc:0.273,Vc:258,  Tn:322.4,
+   Hf:null,   Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:13.9727,B:2653.90,C:234.510},
+  {n:'Ciclohexano',fm:'C₆H₁₂', estado:'g',Tc:553.6,Pc:40.73,w:0.210,Zc:0.273,Vc:308,  Tn:353.9,
+   Hf:-123140, Gf:31920,   CpA:-3.876, CpB:63.249, CpC:-20.928,CpD:0,      Tmax:1500, A:13.6568,B:2723.44,C:220.618},
+  {n:'Ciclohexano (l)',fm:'C₆H₁₂',estado:'l',Tc:553.6,Pc:40.73,w:0.210,Zc:0.273,Vc:308,Tn:353.9,
+   Hf:-156230, Gf:26850,   CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:13.6568,B:2723.44,C:220.618},
+  // ── Alquenos ──
+  {n:'Etileno',   fm:'C₂H₄',  estado:'g', Tc:282.3,Pc:50.40,w:0.087,Zc:0.281,Vc:131,  Tn:169.4,
+   Hf:52510,   Gf:68460,   CpA:1.424,  CpB:14.394, CpC:-4.392, CpD:0,      Tmax:1500, A:null,B:null,C:null},
+  {n:'Propileno', fm:'C₃H₆',  estado:'g', Tc:365.6,Pc:46.65,w:0.140,Zc:0.289,Vc:188.4,Tn:225.5,
+   Hf:19710,   Gf:62205,   CpA:1.637,  CpB:22.706, CpC:-6.915, CpD:0,      Tmax:1500, A:null,B:null,C:null},
+  {n:'1-Buteno',  fm:'C₄H₈',  estado:'g', Tc:420.0,Pc:40.43,w:0.191,Zc:0.277,Vc:239.3,Tn:266.9,
+   Hf:-540,    Gf:70340,   CpA:1.967,  CpB:31.630, CpC:-9.873, CpD:0,      Tmax:1500, A:null,B:null,C:null},
+  {n:'1-Penteno', fm:'C₅H₁₀', estado:'g', Tc:null, Pc:null, w:null, Zc:null, Vc:null,  Tn:null,
+   Hf:-21280,  Gf:78410,   CpA:2.691,  CpB:39.753, CpC:-12.447,CpD:0,      Tmax:1500, A:null,B:null,C:null},
+  {n:'1-Hexeno',  fm:'C₆H₁₂', estado:'g', Tc:504.0,Pc:31.40,w:0.280,Zc:0.265,Vc:354,  Tn:336.3,
+   Hf:-41950,  Gf:86830,   CpA:3.220,  CpB:48.189, CpC:-15.157,CpD:0,      Tmax:1500, A:null,B:null,C:null},
+  {n:'1,3-Butadieno',fm:'C₄H₆',estado:'g',Tc:425.2,Pc:42.77,w:0.190,Zc:0.267,Vc:220.4,Tn:268.7,
+   Hf:109240,  Gf:149795,  CpA:2.734,  CpB:26.786, CpC:-8.882, CpD:0,      Tmax:1500, A:null,B:null,C:null},
+  {n:'Acetileno', fm:'C₂H₂',  estado:'g', Tc:308.3,Pc:61.39,w:0.187,Zc:0.271,Vc:113,  Tn:189.4,
+   Hf:227480,  Gf:209970,  CpA:6.132,  CpB:1.952,  CpC:0,      CpD:-1.299, Tmax:1500, A:null,B:null,C:null},
+  // ── Aromáticos ──
+  {n:'Benceno',   fm:'C₆H₆',  estado:'g', Tc:562.2,Pc:48.98,w:0.210,Zc:0.271,Vc:259,  Tn:353.2,
+   Hf:82930,   Gf:129665,  CpA:-0.206, CpB:39.064, CpC:-13.301,CpD:0,      Tmax:1500, A:13.7819,B:2726.81,C:217.572},
+  {n:'Benceno (l)',fm:'C₆H₆', estado:'l', Tc:562.2,Pc:48.98,w:0.210,Zc:0.271,Vc:259,  Tn:353.2,
+   Hf:49080,   Gf:124520,  CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:13.7819,B:2726.81,C:217.572},
+  {n:'Tolueno',   fm:'C₇H₈',  estado:'g', Tc:591.8,Pc:41.06,w:0.262,Zc:0.264,Vc:316,  Tn:383.8,
+   Hf:50170,   Gf:122050,  CpA:0.290,  CpB:47.052, CpC:-15.716,CpD:0,      Tmax:1500, A:13.9320,B:3056.96,C:217.625},
+  {n:'Tolueno (l)',fm:'C₇H₈', estado:'l', Tc:591.8,Pc:41.06,w:0.262,Zc:0.264,Vc:316,  Tn:383.8,
+   Hf:12180,   Gf:113630,  CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:13.9320,B:3056.96,C:217.625},
+  {n:'Etilbenceno',fm:'C₈H₁₀',estado:'g', Tc:617.2,Pc:36.06,w:0.303,Zc:0.263,Vc:374,  Tn:409.4,
+   Hf:29920,   Gf:130890,  CpA:1.124,  CpB:55.380, CpC:-18.476,CpD:0,      Tmax:1500, A:13.9726,B:3259.93,C:212.300},
+  {n:'Estireno',  fm:'C₈H₈',  estado:'g', Tc:636.0,Pc:38.40,w:0.297,Zc:0.256,Vc:352,  Tn:418.3,
+   Hf:147360,  Gf:213900,  CpA:2.050,  CpB:50.192, CpC:-16.662,CpD:0,      Tmax:1500, A:null,B:null,C:null},
+  {n:'o-Xileno',  fm:'C₈H₁₀', estado:'g', Tc:630.3,Pc:37.34,w:0.310,Zc:0.263,Vc:369,  Tn:417.6,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:14.0415,B:3358.79,C:212.041},
+  {n:'m-Xileno',  fm:'C₈H₁₀', estado:'g', Tc:617.1,Pc:35.36,w:0.326,Zc:0.259,Vc:376,  Tn:412.3,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:14.1387,B:3381.81,C:216.120},
+  {n:'p-Xileno',  fm:'C₈H₁₀', estado:'g', Tc:616.2,Pc:35.11,w:0.322,Zc:0.260,Vc:379,  Tn:411.5,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:14.0579,B:3331.45,C:214.627},
+  // ── Aldehídos / Cetonas ──
+  {n:'Formaldehído',fm:'CH₂O', estado:'g', Tc:408.0,Pc:65.90,w:0.282,Zc:0.223,Vc:115,  Tn:254.1,
+   Hf:-108570, Gf:-102530, CpA:2.264,  CpB:7.022,  CpC:-1.877, CpD:0,      Tmax:1500, A:null,B:null,C:null},
+  {n:'Acetaldehído',fm:'C₂H₄O',estado:'g',Tc:466.0,Pc:55.50,w:0.291,Zc:0.221,Vc:154,  Tn:294.0,
+   Hf:-166190, Gf:-128860, CpA:1.693,  CpB:17.978, CpC:-6.158, CpD:0,      Tmax:1000, A:null,B:null,C:null},
+  {n:'Acetona',   fm:'C₃H₆O', estado:'g', Tc:508.2,Pc:47.01,w:0.307,Zc:0.233,Vc:209,  Tn:329.4,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:14.3145,B:2756.22,C:228.060},
+  // ── Alcoholes ──
+  {n:'Metanol',   fm:'CH₄O',  estado:'g', Tc:512.6,Pc:80.97,w:0.564,Zc:0.224,Vc:118,  Tn:337.9,
+   Hf:-200660, Gf:-161960, CpA:2.211,  CpB:12.216, CpC:-3.450, CpD:0,      Tmax:1500, A:16.5785,B:3638.27,C:239.500},
+  {n:'Metanol (l)',fm:'CH₄O', estado:'l', Tc:512.6,Pc:80.97,w:0.564,Zc:0.224,Vc:118,  Tn:337.9,
+   Hf:-238660, Gf:-166270, CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:16.5785,B:3638.27,C:239.500},
+  {n:'Etanol',    fm:'C₂H₆O', estado:'g', Tc:513.9,Pc:61.48,w:0.645,Zc:0.240,Vc:167,  Tn:351.4,
+   Hf:-235100, Gf:-168490, CpA:3.518,  CpB:20.001, CpC:-6.002, CpD:0,      Tmax:1500, A:16.8958,B:3795.17,C:230.918},
+  {n:'Etanol (l)', fm:'C₂H₆O',estado:'l', Tc:513.9,Pc:61.48,w:0.645,Zc:0.240,Vc:167,  Tn:351.4,
+   Hf:-277690, Gf:-174780, CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:16.8958,B:3795.17,C:230.918},
+  {n:'1-Propanol',fm:'C₃H₈O', estado:'g', Tc:536.8,Pc:51.75,w:0.622,Zc:0.254,Vc:219,  Tn:370.4,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:16.1154,B:3483.67,C:205.807},
+  {n:'2-Propanol',fm:'C₃H₈O', estado:'g', Tc:508.3,Pc:47.62,w:0.668,Zc:0.248,Vc:220,  Tn:355.4,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:16.6796,B:3640.20,C:219.610},
+  {n:'1-Butanol', fm:'C₄H₁₀O',estado:'g', Tc:563.1,Pc:44.23,w:0.594,Zc:0.260,Vc:275,  Tn:390.8,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:15.3144,B:3212.43,C:182.739},
+  {n:'Fenol',     fm:'C₆H₆O', estado:'g', Tc:694.3,Pc:61.30,w:0.444,Zc:0.243,Vc:229,  Tn:455.0,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:14.4387,B:3507.80,C:175.400},
+  // ── Ácidos ──
+  {n:'Ácido acético',fm:'C₂H₄O₂',estado:'l',Tc:592.0,Pc:57.86,w:0.467,Zc:0.211,Vc:179.7,Tn:391.1,
+   Hf:-484500, Gf:-389900, CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:15.0717,B:3580.80,C:224.650},
+  // ── Inorgánicos ──
+  {n:'Agua',      fm:'H₂O',   estado:'g', Tc:647.1,Pc:220.55,w:0.345,Zc:0.229,Vc:55.9, Tn:373.2,
+   Hf:-241818, Gf:-228572, CpA:3.470,  CpB:1.450,  CpC:0,      CpD:0.121,  Tmax:2000, A:16.3872,B:3885.70,C:230.170},
+  {n:'Agua (l)',  fm:'H₂O',   estado:'l', Tc:647.1,Pc:220.55,w:0.345,Zc:0.229,Vc:55.9, Tn:373.2,
+   Hf:-285830, Gf:-237129, CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:16.3872,B:3885.70,C:230.170},
+  {n:'Amoniaco',  fm:'NH₃',   estado:'g', Tc:405.7,Pc:112.80,w:0.253,Zc:0.242,Vc:72.5, Tn:239.7,
+   Hf:-46110,  Gf:-16450,  CpA:3.578,  CpB:3.020,  CpC:0,      CpD:-0.186, Tmax:1800, A:null,B:null,C:null},
+  {n:'Dióxido de carbono',fm:'CO₂',estado:'g',Tc:304.2,Pc:73.83,w:0.224,Zc:0.274,Vc:94.0,Tn:null,
+   Hf:-393509, Gf:-394359, CpA:5.457,  CpB:1.045,  CpC:0,      CpD:-1.157, Tmax:2000, A:null,B:null,C:null},
+  {n:'Monóxido de carbono',fm:'CO',estado:'g',Tc:132.9,Pc:34.99,w:0.048,Zc:0.299,Vc:93.4,Tn:81.7,
+   Hf:-110525, Gf:-137169, CpA:3.376,  CpB:0.557,  CpC:0,      CpD:-0.031, Tmax:2500, A:null,B:null,C:null},
+  {n:'Hidrógeno', fm:'H₂',    estado:'g', Tc:33.19,Pc:13.13,w:-0.216,Zc:0.305,Vc:64.1, Tn:20.4,
+   Hf:0,       Gf:0,       CpA:3.249,  CpB:0.422,  CpC:0,      CpD:0.083,  Tmax:3000, A:null,B:null,C:null},
+  {n:'Oxígeno',   fm:'O₂',    estado:'g', Tc:154.6,Pc:50.43,w:0.022, Zc:0.288,Vc:73.4, Tn:90.2,
+   Hf:0,       Gf:0,       CpA:3.639,  CpB:0.506,  CpC:0,      CpD:-0.227, Tmax:2000, A:null,B:null,C:null},
+  {n:'Nitrógeno', fm:'N₂',    estado:'g', Tc:126.2,Pc:34.00,w:0.038, Zc:0.289,Vc:89.2, Tn:77.3,
+   Hf:0,       Gf:0,       CpA:3.280,  CpB:0.593,  CpC:0,      CpD:0.040,  Tmax:2000, A:null,B:null,C:null},
+  {n:'Dióxido de azufre',fm:'SO₂',estado:'g',Tc:430.8,Pc:78.84,w:0.245,Zc:0.269,Vc:122,Tn:263.1,
+   Hf:-296830, Gf:-300194, CpA:5.699,  CpB:0.801,  CpC:0,      CpD:-1.015, Tmax:2000, A:null,B:null,C:null},
+  {n:'Sulfuro de hidrógeno',fm:'H₂S',estado:'g',Tc:373.5,Pc:89.63,w:0.094,Zc:0.284,Vc:98.5,Tn:212.8,
+   Hf:-20630,  Gf:-33560,  CpA:3.931,  CpB:1.490,  CpC:0,      CpD:-0.232, Tmax:2300, A:null,B:null,C:null},
+  {n:'Cloro',     fm:'Cl₂',   estado:'g', Tc:417.2,Pc:77.10,w:0.069, Zc:0.265,Vc:124,  Tn:239.1,
+   Hf:0,       Gf:0,       CpA:4.442,  CpB:0.089,  CpC:0,      CpD:-0.344, Tmax:3000, A:null,B:null,C:null},
+  {n:'Argón',     fm:'Ar',    estado:'g', Tc:150.9,Pc:48.98,w:0.000, Zc:0.291,Vc:74.6, Tn:87.3,
+   Hf:0,       Gf:0,       CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:null,B:null,C:null},
+  {n:'Cloruro de hidrógeno',fm:'HCl',estado:'g',Tc:324.7,Pc:83.10,w:0.132,Zc:0.249,Vc:81,Tn:188.2,
+   Hf:-92307,  Gf:-95299,  CpA:3.156,  CpB:0.623,  CpC:0,      CpD:0.151,  Tmax:2000, A:null,B:null,C:null},
+  {n:'Óxido nítrico',fm:'NO', estado:'g', Tc:180.2,Pc:64.80,w:0.583,Zc:0.251,Vc:58.0, Tn:121.4,
+   Hf:90250,   Gf:86550,   CpA:3.387,  CpB:0.629,  CpC:0,      CpD:0.014,  Tmax:2000, A:null,B:null,C:null},
+  {n:'Óxido nitroso',fm:'N₂O',estado:'g',Tc:309.6,Pc:72.45,w:0.141,Zc:0.274,Vc:97.4, Tn:184.7,
+   Hf:82050,   Gf:104200,  CpA:5.328,  CpB:1.214,  CpC:0,      CpD:-0.928, Tmax:2000, A:null,B:null,C:null},
+  {n:'Dióxido de nitrógeno',fm:'NO₂',estado:'g',Tc:null,Pc:null,w:null,Zc:null,Vc:null,Tn:null,
+   Hf:33180,   Gf:51310,   CpA:4.982,  CpB:1.195,  CpC:0,      CpD:-0.792, Tmax:2000, A:null,B:null,C:null},
+  {n:'Cianuro de hidrógeno',fm:'HCN',estado:'g',Tc:456.7,Pc:53.90,w:0.410,Zc:0.197,Vc:139,Tn:298.9,
+   Hf:135100,  Gf:124700,  CpA:4.736,  CpB:1.359,  CpC:0,      CpD:-0.725, Tmax:2500, A:null,B:null,C:null},
+  {n:'Óxido de etileno',fm:'C₂H₄O',estado:'g',Tc:null,Pc:null,w:null,Zc:null,Vc:null,Tn:null,
+   Hf:-52630,  Gf:-13010,  CpA:-0.385, CpB:23.463, CpC:-9.296, CpD:0,      Tmax:1000, A:null,B:null,C:null},
+  // ── Halogenados ──
+  {n:'Tetracloruro de carbono',fm:'CCl₄',estado:'g',Tc:556.4,Pc:45.60,w:0.193,Zc:0.272,Vc:276,Tn:349.8,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:14.0572,B:2914.23,C:232.148},
+  {n:'Cloroformo',fm:'CHCl₃', estado:'g',Tc:536.4,Pc:54.72,w:0.222,Zc:0.293,Vc:239,  Tn:334.3,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:13.7324,B:2548.74,C:218.552},
+  {n:'Diclorometano',fm:'CH₂Cl₂',estado:'g',Tc:510.0,Pc:60.80,w:0.199,Zc:0.265,Vc:185, Tn:312.9,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:13.9891,B:2463.93,C:223.240},
+  {n:'Clorobenceno',fm:'C₆H₅Cl',estado:'g',Tc:632.4,Pc:45.20,w:0.250,Zc:0.265,Vc:308, Tn:404.9,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:13.8635,B:3174.78,C:211.700},
+  // ── Otros ──
+  {n:'Éter dietílico',fm:'C₄H₁₀O',estado:'g',Tc:466.7,Pc:36.40,w:0.281,Zc:0.263,Vc:280,Tn:307.6,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:14.0735,B:2511.29,C:231.200},
+  {n:'Acetonitrilo',fm:'C₂H₃N',estado:'g',Tc:545.5,Pc:48.30,w:0.338,Zc:0.184,Vc:173,  Tn:354.8,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:14.8950,B:3413.10,C:250.523},
+  {n:'Disulfuro de carbono',fm:'CS₂',estado:'g',Tc:552.0,Pc:79.00,w:0.111,Zc:0.275,Vc:160,Tn:319.4,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:null,B:null,C:null},
+  {n:'Naftaleno', fm:'C₁₀H₈', estado:'g', Tc:748.4,Pc:40.51,w:0.302,Zc:0.269,Vc:413,  Tn:491.2,
+   Hf:null,    Gf:null,    CpA:null,   CpB:null,   CpC:null,   CpD:null,   Tmax:null, A:null,B:null,C:null},
+];
+
+// ── Normalizar texto ──
+function normES(s){ return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[-\s]+/g,' ').trim(); }
+
+// ── Búsqueda de especie ──
+function esSearch(q){
+  const dd = document.getElementById('es_dropdown');
+  const hint = document.getElementById('es_hint');
+  if(!q || q.length < 2){ dd.style.display='none'; return; }
+  const nq = normES(q);
+  const matches = SPECIES_DB.filter(s=>normES(s.n).includes(nq))
+    .sort((a,b)=>{ const an=normES(a.n),bn=normES(b.n); return (an.startsWith(nq)?0:1)-(bn.startsWith(nq)?0:1)||an.localeCompare(bn); })
+    .slice(0,10);
+  if(!matches.length){ dd.style.display='none'; hint.textContent='No se encontraron resultados.'; return; }
+  dd.innerHTML = matches.map((s,i)=>`<div onclick="esSelect(${SPECIES_DB.indexOf(s)})"
+    style="padding:0.6rem 1rem;cursor:pointer;border-bottom:1px solid #2a3a2a;color:var(--text);
+    font-size:0.9rem;display:flex;justify-content:space-between;align-items:center;"
+    onmouseover="this.style.background='#1f3320'" onmouseout="this.style.background=''"
+  ><span>${s.n}</span><span style="font-size:0.75rem;color:#8aab8a;">${s.fm} · ${s.estado==='g'?'gas ideal':s.estado==='l'?'líquido':'sólido'}</span></div>`).join('');
+  dd.style.display='block';
+  hint.textContent = matches.length + ' resultado(s) encontrado(s)';
+}
+
+function esSelect(idx){
+  const s = SPECIES_DB[idx];
+  document.getElementById('es_search').value = s.n;
+  document.getElementById('es_dropdown').style.display='none';
+  esDisplay(s);
+}
+
+function esDisplay(s){
+  const R = 8.314; // J/(mol·K)
+  const fmtN = (v,dec=3) => (v===null||v===undefined)?'—':v.toLocaleString('es-MX',{minimumFractionDigits:0,maximumFractionDigits:dec});
+  const row = (label,val,unit='',color='') =>
+    `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:0.35rem 0;border-bottom:1px solid #2a3a2a;">
+      <span style="color:#8aab8a;font-size:0.82rem;">${label}</span>
+      <span style="color:${color||'var(--text)'};font-family:'DM Mono',monospace;font-size:0.9rem;">${val} <span style="color:#6a8a6a;font-size:0.75rem;">${unit}</span></span>
+    </div>`;
+
+  // Nombre y fórmula
+  document.getElementById('es_name').textContent = s.n;
+  document.getElementById('es_formula').innerHTML = `Fórmula: <b>${s.fm}</b>`;
+  const estadoLabel = s.estado==='g'?'Gas ideal':'Líquido';
+  document.getElementById('es_estado').textContent = `Estado de referencia: ${estadoLabel} · Datos: Smith, Van Ness & Abbott 7ª ed.`;
+
+  // Propiedades críticas
+  let crit = '';
+  crit += row('Temperatura crítica T<sub>c</sub>', fmtN(s.Tc,1), 'K', '#a8d8a8');
+  crit += row('Presión crítica P<sub>c</sub>', fmtN(s.Pc,2), 'bar', '#a8d8a8');
+  crit += row('Factor acéntrico ω', fmtN(s.w,3), '', '#a8d8a8');
+  crit += row('Factor compresibilidad Z<sub>c</sub>', fmtN(s.Zc,3), '');
+  crit += row('Volumen crítico V<sub>c</sub>', fmtN(s.Vc,1), 'cm³/mol');
+  crit += row('Temperatura ebullición T<sub>n</sub>', fmtN(s.Tn,1), 'K');
+  document.getElementById('es_criticas').innerHTML = crit;
+
+  // Formación
+  let form = '';
+  if(s.Hf !== null && s.Hf !== undefined){
+    const HfkJ = (s.Hf/1000).toFixed(2);
+    const GfkJ = s.Gf!==null ? (s.Gf/1000).toFixed(2) : '—';
+    const color_Hf = s.Hf < 0 ? '#8ac8ff' : '#ffaa8a';
+    const color_Gf = s.Gf !== null && s.Gf < 0 ? '#8ac8ff' : '#ffaa8a';
+    form += row('ΔH°<sub>f,298</sub>', HfkJ, 'kJ/mol', color_Hf);
+    form += row('ΔG°<sub>f,298</sub>', GfkJ, 'kJ/mol', color_Gf);
+    form += row('ΔH°<sub>f,298</sub> (J/mol)', fmtN(s.Hf,0), 'J/mol', '#aaa');
+    form += row('ΔG°<sub>f,298</sub> (J/mol)', fmtN(s.Gf,0), 'J/mol', '#aaa');
+    // Cp a 298 K
+    if(s.CpA !== null){
+      const T=298.15, B=s.CpB*1e-3, C2=s.CpC*1e-6, D=s.CpD*1e5;
+      const CpR = s.CpA + B*T + C2*T*T + D/(T*T);
+      form += `<div style="margin-top:0.8rem;padding:0.5rem;background:#1a2a1a;border-radius:6px;font-size:0.8rem;color:#8aab8a;">
+        C<sup>ig</sup><sub>p</sub>/R a 298 K = <b style="color:var(--mint);">${CpR.toFixed(3)}</b>
+        &nbsp;→&nbsp; C<sup>ig</sup><sub>p</sub> = <b style="color:var(--mint);">${(CpR*R).toFixed(2)} J/(mol·K)</b>
+      </div>`;
+    }
+  } else {
+    form = '<p style="color:#8aab8a;font-size:0.85rem;font-style:italic;">Datos de formación no disponibles en Tabla C.4.</p>';
+  }
+  document.getElementById('es_formacion').innerHTML = form;
+
+  // Cp
+  let cpHTML = '';
+  if(s.CpA !== null){
+    cpHTML += row('A', fmtN(s.CpA,4), '');
+    cpHTML += row('B (×10³)', fmtN(s.CpB,4), '');
+    cpHTML += row('C (×10⁶)', s.CpC!==0?fmtN(s.CpC,4):'0', '');
+    cpHTML += row('D (×10⁻⁵)', s.CpD!==0?fmtN(s.CpD,4):'0', '');
+    cpHTML += `<div style="margin-top:0.8rem;font-size:0.78rem;color:#8aab8a;">T válida: 298 K – ${s.Tmax} K</div>`;
+    // Tabla a temperaturas clave
+    const temps = [298, 400, 500, 600, 800, 1000];
+    let tabla = '<table style="width:100%;margin-top:0.8rem;font-size:0.8rem;border-collapse:collapse;"><thead><tr style="color:var(--mint);"><th style="text-align:left;padding:3px 6px;">T (K)</th><th style="padding:3px 6px;">Cp/R</th><th style="padding:3px 6px;">Cp (J/mol·K)</th></tr></thead><tbody>';
+    const B=s.CpB*1e-3, C2=s.CpC*1e-6, D=s.CpD*1e5;
+    temps.filter(t=>t<=s.Tmax).forEach(T=>{
+      const CpR = s.CpA + B*T + C2*T*T + D/(T*T);
+      tabla += `<tr style="border-top:1px solid #2a3a2a;"><td style="padding:3px 6px;color:#8aab8a;">${T}</td><td style="padding:3px 6px;font-family:'DM Mono',monospace;">${CpR.toFixed(3)}</td><td style="padding:3px 6px;font-family:'DM Mono',monospace;">${(CpR*R).toFixed(2)}</td></tr>`;
+    });
+    tabla += '</tbody></table>';
+    cpHTML += tabla;
+    document.getElementById('es_cp_nota').innerHTML = 'Fuente: Tabla C.1 – Smith, Van Ness & Abbott';
+  } else {
+    cpHTML = '<p style="color:#8aab8a;font-size:0.85rem;font-style:italic;">Datos de Cp no disponibles en Tabla C.1.</p>';
+  }
+  document.getElementById('es_cp').innerHTML = cpHTML;
+
+  // Antoine
+  let antHTML = '';
+  if(s.A !== null){
+    antHTML += row('A', fmtN(s.A,4), '');
+    antHTML += row('B', fmtN(s.B,2), '');
+    antHTML += row('C', fmtN(s.C,3), '');
+    // Calcular Psat a Tn y a 25°C
+    const calcPsat = (t_C) => Math.exp(s.A - s.B/(t_C+s.C));
+    if(s.Tn !== null){
+      const t_Tn = s.Tn - 273.15;
+      antHTML += `<div style="margin-top:0.8rem;padding:0.5rem;background:#1a2a1a;border-radius:6px;font-size:0.8rem;">
+        <div style="color:#8aab8a;margin-bottom:4px;">Verificación a T<sub>n</sub> = ${s.Tn} K (${t_Tn.toFixed(1)} °C):</div>
+        <div style="color:var(--mint);font-family:'DM Mono',monospace;">P<sup>sat</sup> = ${calcPsat(t_Tn).toFixed(1)} kPa ≈ 101.3 kPa ✓</div>
+      </div>`;
+    }
+    // Campo para calcular Psat a T personalizada
+    antHTML += `<div style="margin-top:0.8rem;">
+      <label style="font-size:0.78rem;color:#8aab8a;">Calcular P<sup>sat</sup> a temperatura:</label>
+      <div style="display:flex;gap:0.5rem;margin-top:0.4rem;align-items:center;">
+        <input type="number" id="es_t_psat" value="25" step="1"
+          style="flex:1;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:0.4rem 0.6rem;font-size:0.85rem;"
+          oninput="esCalcPsat(${s.A},${s.B},${s.C})"
+        > <span style="color:#8aab8a;font-size:0.8rem;">°C</span>
+      </div>
+      <div id="es_psat_result" style="margin-top:0.5rem;font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--mint);"></div>
+    </div>`;
+    document.getElementById('es_psat_calc').innerHTML = '';
+  } else {
+    antHTML = '<p style="color:#8aab8a;font-size:0.85rem;font-style:italic;">Constantes de Antoine no disponibles en Tabla B.2.</p>';
+  }
+  document.getElementById('es_antoine').innerHTML = antHTML;
+
+  document.getElementById('es_result').style.display = 'block';
+}
+
+function esCalcPsat(A, B, C){
+  const t = parseFloat(document.getElementById('es_t_psat').value);
+  if(isNaN(t)){ document.getElementById('es_psat_result').textContent=''; return; }
+  const P_kPa = Math.exp(A - B/(t+C));
+  const P_bar = P_kPa/100;
+  const P_atm = P_kPa/101.325;
+  document.getElementById('es_psat_result').innerHTML =
+    `P<sup>sat</sup>(${t}°C) = <b>${P_kPa.toFixed(3)} kPa</b> = ${P_bar.toFixed(4)} bar = ${P_atm.toFixed(4)} atm`;
+}
+
+</script>
+</body>
+</html>
